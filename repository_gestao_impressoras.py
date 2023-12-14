@@ -64,7 +64,7 @@ def recuperarDadosImpressoras(dataframe):
             result = conn.execute(query)
             #Constroi DataFrame com os resultados da consulta
             sql_data = pd.DataFrame(result.fetchall(), columns=['IMPRESSORA_ID', 'SERIALNUMBER'])
-            resultdf = pd.merge(dataframe, sql_data, how='right', on='SERIALNUMBER')
+            resultdf = pd.merge(dataframe, sql_data, how='inner', on='SERIALNUMBER')
             #print(resultdf)
             #trans.commit()
         except:
@@ -75,7 +75,6 @@ def recuperarDadosImpressoras(dataframe):
 
     # Fecha a conexão com o banco de dados
     engine.dispose()
-    print(sql_data)
     return resultdf
 
 def atualizarStatusLitigiosidade(dataAtual):
