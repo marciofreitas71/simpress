@@ -64,7 +64,7 @@ def recuperarDadosImpressoras(dataframe):
             result = conn.execute(query)
             #Constroi DataFrame com os resultados da consulta
             sql_data = pd.DataFrame(result.fetchall(), columns=['IMPRESSORA_ID', 'SERIALNUMBER'])
-            resultdf = pd.merge(dataframe, sql_data, how='inner', on='SERIALNUMBER')
+            resultdf = pd.merge(dataframe, sql_data, how='right', on='SERIALNUMBER')
             #print(resultdf)
             #trans.commit()
         except:
@@ -75,7 +75,52 @@ def recuperarDadosImpressoras(dataframe):
 
     # Fecha a conexão com o banco de dados
     engine.dispose()
+    # print(sql_data)
     return resultdf
+
+def recuperarDadosLocaisImpressoras():
+    engine = getConnection()
+    
+    # cria objeto Metadata
+    metadata = MetaData()
+
+    # associa objeto de conexão ao Metadata
+    metadata.bind = engine
+
+    table = Table(
+        'contagem_impressora',
+        metadata,
+        autoload_with=engine
+        )
+    
+    # criar uma expressão SQL dinâmica com a condição de atualização
+    query = select(table.columns['impressora_id'], 
+                   table.columns['contador_pb'],
+                   table.columns['contador_cor'],
+                   table.columns['contador_total'],
+                   table.columns['data_leitura'],
+                   table.columns['created_at']                   
+                )
+    resultdf = pd.DataFrame()
+
+    # Executa a consulta
+    with engine.connect() as conn:
+        conn.begin()
+        try:
+            result = conn.execute(query)
+            #Constroi DataFrame com os resultados da consulta
+            sql_data = pd.DataFrame(result.fetchall(), columns=result.keys())
+            
+        except:
+            
+            raise
+        finally:
+            conn.close()
+
+    # Fecha a conexão com o banco de dados
+    engine.dispose()
+    # print(sql_data)
+    return sql_data
 
 def atualizarStatusLitigiosidade(dataAtual):
 
