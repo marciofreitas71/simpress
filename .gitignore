@@ -1,0 +1,5 @@
+# ignore todos os arquivos das pastas:
+venv/
+__pycache__
+.env
+
