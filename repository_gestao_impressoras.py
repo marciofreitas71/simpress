@@ -2,6 +2,7 @@ from sqlalchemy import create_engine, Table, Column, Integer, MetaData, DateTime
 from sqlalchemy.sql import select
 import pandas as pd
 from dotenv import load_dotenv
+import os
 
 
 def getConnection():
