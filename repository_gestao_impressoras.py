@@ -1,15 +1,16 @@
 from sqlalchemy import create_engine, Table, Column, Integer, MetaData, DateTime, String
 from sqlalchemy.sql import select
 import pandas as pd
+from dotenv import load_dotenv
 
 
 def getConnection():
     # Conecta ao banco de dados Oracle
-    username = 'GESTAO_IMPRESSAO'
-    password = 'je8u_asdfa'
-    host = 'ba1linha'
-    port = '1523'
-    service_name = 'dese'
+    username = os.getenv("username")
+    password = os.getenv("password")
+    host = os.getenv("host")
+    port = os.getenv("port")
+    service_name = os.getenv("service_name")
     dsn = f"oracle+oracledb://{username}:{password}@{host}:{port}/{service_name}"
     return create_engine(dsn)
 
