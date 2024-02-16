@@ -71,6 +71,8 @@ def inserir_contagem_impressoras(df_remoto):
     print()
     print("Dados do banco remoto")
     print(df_remoto)
+
+    # TODO: Complementar função para que os dados das impressoras local e remota possam ser comparados
     
     # df3 = pd.merge(df_remoto, df_local, on='SERIALNUMBER', how='outer')
 
