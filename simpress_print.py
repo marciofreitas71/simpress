@@ -111,7 +111,7 @@ def inserir_contagem_impressoras(df_remoto):
     # result = (pd.concat([df1, df2], axis=1)).sort_values(by='IMPRESSORA_ID')
     # print(result.drop(columns=['IMPRESSORA_ID']))
 
-# Example usage
+# Dados api
 wsdl_url = config.wsdl_url
 service_method = config.service_method
 output_csv = config.output_csv
