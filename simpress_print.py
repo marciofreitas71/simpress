@@ -59,21 +59,20 @@ def inserir_contagem_impressoras(df_remoto):
     df_remoto['CONTADOR_TOTAL'] = df_remoto['CONTADOR_PB'] + df_remoto['CONTADOR_COR']
     # print(df_remoto)
     df_local = repo.recuperarDadosLocaisImpressoras()
-    # df_remoto = df_remoto.rename(columns={"ReferenceMono" : "CONTADOR_PB", "ReferenceColor" : "CONTADOR_COR", "DateTimeRead" : "DATA_LEITURA"})
-    #print('-----------------------------------------------')
+    df_remoto = df_remoto.rename(columns={"ReferenceMono" : "CONTADOR_PB", "ReferenceColor" : "CONTADOR_COR", "DateTimeRead" : "DATA_LEITURA"})
+       
+    print("Dados do banco local")
+    print(df_local)
+    print()
+    print("Dados do banco remoto")
+    print(df_remoto)
     
-    
-    #-------------inicio do trecho alterado------------------#
-
     # df3 = pd.merge(df_remoto, df_local, on='SERIALNUMBER', how='outer')
 
     # pd.set_option('display.max_rows', None)
     # df3.fillna(0, inplace=True)
     
     # print(df_remoto.sort_values(by='SERIALNUMBER'))
-    print(df_local)
-    print()
-    print(df_remoto)
     # print(df_local.shape)
 
     # print(df3.sort_values(by='SERIALNUMBER'))
