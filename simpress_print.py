@@ -2,7 +2,6 @@ from datetime import datetime
 import zeep
 import pandas as pd
 import repository_gestao_impressoras as repo
-import os
 import config
 from dotenv import load_dotenv
 
