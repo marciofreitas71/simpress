@@ -9,7 +9,6 @@ load_dotenv()
 
 def getConnection():
     # Conecta ao banco de dados Oracle
-    # Adicione estas linhas para verificar os dados de conexão
     username = os.getenv("user_name")
     password = os.getenv("password")
     host = os.getenv("host")
