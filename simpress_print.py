@@ -2,6 +2,12 @@ from datetime import datetime
 import zeep
 import pandas as pd
 import repository_gestao_impressoras as repo
+import os
+import config
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 def send_soap_request_and_write_to_csv(wsdl_url, service_method, output_csv, payload):
     # Create a SOAP client using the WSDL URL
@@ -106,23 +112,10 @@ def inserir_contagem_impressoras(df_remoto):
     # print(result.drop(columns=['IMPRESSORA_ID']))
 
 # Example usage
-wsdl_url = 'https://api-counters.nddprint.com/CountersWS/CountersData.asmx?WSDL'
-service_method = 'GetReferenceCountersData' #'GetPlainCountersData'
-output_csv = 'output-reference-2023-10-27.csv' #'output-plain-2023-10-15.csv'
-payload = {
-    'dealerName': 'SIMPRESS',
-    'dealerUserEmail': 'ruguedes@tre-ba.jus.br',
-    'dealerUserPassword': '8lYKAfLbl2FKqAJgWWRA5Q==',
-    #'dateTimeStart': '2023-10-17 00:00:00',
-    'dateTimeEnd': '2023-12-01 02:00:00',
-    'maxLimitDaysEarlier': 1,
-    'enterpriseName': '9853_TRE_BA',
-    'serialNumber': '',
-    'siteName': '',
-    'siteDivisionName': '',
-    'engaged': False,
-    'fieldsList': 'EnterpriseName;PrinterDeviceID;BrandName;PrinterModelName;SerialNumber;AddressName;DateTimeRead;ReferenceMono;ReferenceColor;Engaged' #'EnterpriseName;PrinterDeviceID;SerialNumber;AddressName;siteName;EnabledCounters;CounterTypeName;FirstCounterTotal;LatestCounterTotal;FirstCounterMono;LatestCounterMono;FirstCounterColor;LatestCounterColor' #'EnterpriseName;PrinterDeviceID;BrandName;PrinterModelName;SerialNumber;AddressName;DateTimeRead;ReferenceMono;ReferenceColor;Engaged' #
-}
+wsdl_url = config.wsdl_url
+service_method = config.service_method
+output_csv = config.output_csv
+payload = config.payload
 
 #insert_printer('output-reference-2023-10-17.csv', 'HP')
 #send_soap_request_and_write_to_csv(wsdl_url, service_method, output_csv, payload)
