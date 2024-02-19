@@ -5,12 +5,6 @@ import repository_gestao_impressoras as repo
 import config
 from dotenv import load_dotenv
 
-
-load_dotenv()
-import config
-from dotenv import load_dotenv
-
-
 load_dotenv()
 
 def send_soap_request_and_write_to_csv(wsdl_url, service_method, output_csv, payload):
@@ -61,24 +55,7 @@ def recuperar_dados_webservice(wsdl_url, service_method, payload):
     df = pd.read_json(response)
     #print(df)
     return df
-
-def inserir_contagem_impressoras(df_remoto):
-    df_remoto = df_remoto.rename(columns={"ReferenceMono" : "CONTADOR_PB", "ReferenceColor" : "CONTADOR_COR", "DateTimeRead" : "DATA_LEITURA"})
-    df_remoto.columns = df_remoto.columns.str.upper()
-    df_remoto = df_remoto[['SERIALNUMBER', 'DATA_LEITURA', 'CONTADOR_PB', 'CONTADOR_COR']]
-    df_remoto['CONTADOR_TOTAL'] = df_remoto['CONTADOR_PB'] + df_remoto['CONTADOR_COR']
-    # print(df_remoto)
-    df_local = repo.recuperarDadosLocaisImpressoras()
-    df_remoto = df_remoto.rename(columns={"ReferenceMono" : "CONTADOR_PB", "ReferenceColor" : "CONTADOR_COR", "DateTimeRead" : "DATA_LEITURA"})
-       
-    print("Dados do banco local")
-    print(df_local)
-    print()
-    print("Dados do banco remoto")
-    print(df_remoto)
-
-    # TODO: Complementar função para que os dados das impressoras local e remota possam ser comparados
-    
+   
     # df3 = pd.merge(df_remoto, df_local, on='SERIALNUMBER', how='outer')
 def inserir_contagem_impressoras(df_remoto):
     df_remoto = df_remoto.rename(columns={"ReferenceMono" : "CONTADOR_PB", "ReferenceColor" : "CONTADOR_COR", "DateTimeRead" : "DATA_LEITURA"})
@@ -150,15 +127,9 @@ wsdl_url = config.wsdl_url
 service_method = config.service_method
 output_csv = config.output_csv
 payload = config.payload
-# Dados api
-wsdl_url = config.wsdl_url
-service_method = config.service_method
-output_csv = config.output_csv
-payload = config.payload
 
 #insert_printer('output-reference-2023-10-17.csv', 'HP')
 #send_soap_request_and_write_to_csv(wsdl_url, service_method, output_csv, payload)
-df_remoto = recuperar_dados_webservice(wsdl_url, service_method, payload)
 df_remoto = recuperar_dados_webservice(wsdl_url, service_method, payload)
 
 # dfContagem = inserir_contagem_impressoras(dfContagem)
