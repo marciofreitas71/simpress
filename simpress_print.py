@@ -72,56 +72,6 @@ def inserir_contagem_impressoras(df_remoto):
     print("Dados do banco remoto")
     print(df_remoto)
 
-    # TODO: Complementar função para que os dados das impressoras local e remota possam ser comparados
-    
-    # df3 = pd.merge(df_remoto, df_local, on='SERIALNUMBER', how='outer')
-
-    # pd.set_option('display.max_rows', None)
-    # df3.fillna(0, inplace=True)
-    
-    # print(df_remoto.sort_values(by='SERIALNUMBER'))
-    # print(df_local.shape)
-    # print(df_remoto.sort_values(by='SERIALNUMBER'))
-    # print(df_local.shape)
-
-    # print(df3.sort_values(by='SERIALNUMBER'))
-    # # print('Impressao de df_remoto')
-    # # print('Impressao de df_remoto')
-    # print(df3.columns)
-
-    # df_remoto = pd.df_remoto(columns=[['IMPRESSORA_ID', 'SERIALNUMBER', 'DATA_LEITURA', 'CONTADOR_PB', 'CONTADOR_COR', 'CONTADOR_TOTAL']])
-    # df_remoto = pd.df_remoto(columns=[['IMPRESSORA_ID', 'SERIALNUMBER', 'DATA_LEITURA', 'CONTADOR_PB', 'CONTADOR_COR', 'CONTADOR_TOTAL']])
-
-    # for index, row in df3.iterrows():
-    #     if row['CONTADOR_TOTAL_y'] < row['CONTADOR_TOTAL_x'] or row['CONTADOR_TOTAL_y'] == 0:
-    #         registro = [row['IMPRESSORA_ID'], row['SERIALNUMBER'], pd.to_datetime(row['DATA_LEITURA_x']), str(row['CONTADOR_PB_x']), str(row['CONTADOR_COR_x']), str(row['CONTADOR_TOTAL_x'])]
-    #         df_remoto.loc[len(df_remoto)] = registro
-    #         df_remoto.loc[len(df_remoto)] = registro
-    #     else:
-    #         registro = [row['IMPRESSORA_ID'], row['SERIALNUMBER'], pd.to_datetime(row['DATA_LEITURA_y']), str(row['CONTADOR_PB_y']), str(row['CONTADOR_COR_y']), str(row['CONTADOR_TOTAL_y'])]
-    #         df_remoto.loc[len(df_remoto)] = registro
-    #         df_remoto.loc[len(df_remoto)] = registro
-        
-
-    # # Adiciona a data atual à coluna 'CREATED_AT' para todas as linhas
-    # df_remoto['CREATED_AT'] = datetime.now()
-    # df_remoto['CREATED_AT'] = datetime.now()
-                
-    # # #-------------fim do trecho alterado------------------#
-       
-    
-    # df_remoto.drop('SERIALNUMBER', axis=1, inplace=True)
-    # df_remoto.drop('SERIALNUMBER', axis=1, inplace=True)
-    # df1 = df3[['IMPRESSORA_ID','CONTADOR_PB_x','CONTADOR_COR_x','CONTADOR_TOTAL_x','CONTADOR_PB_y','CONTADOR_COR_y','CONTADOR_TOTAL_y']]
-    # # print(df1)
-    # # repo.cadastrarContagemImpressoras(df_remoto)
-    # df2 = df_remoto[['IMPRESSORA_ID','CONTADOR_PB','CONTADOR_COR','CONTADOR_TOTAL']]
-    # # repo.cadastrarContagemImpressoras(df_remoto)
-    # df2 = df_remoto[['IMPRESSORA_ID','CONTADOR_PB','CONTADOR_COR','CONTADOR_TOTAL']]
-    # # print(df2)
-    # result = (pd.concat([df1, df2], axis=1)).sort_values(by='IMPRESSORA_ID')
-    # print(result.drop(columns=['IMPRESSORA_ID']))
-
 # Dados api
 wsdl_url = config.wsdl_url
 service_method = config.service_method
