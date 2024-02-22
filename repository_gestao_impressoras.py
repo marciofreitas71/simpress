@@ -9,12 +9,12 @@ load_dotenv()
 
 def getConnection():
     # Conecta ao banco de dados Oracle
-    username = os.getenv("user_name")
-    password = os.getenv("password")
-    host = os.getenv("host")
-    port = os.getenv("port")
-    service_name = os.getenv("service_name")
-    dsn = f"oracle+oracledb://{username}:{password}@{host}:{port}/{service_name}"
+    user_name = os.getenv('user_name')
+    password = os.getenv('password')
+    host = os.getenv('host')
+    port = os.getenv('port')
+    service_name = os.getenv('service_name')
+    dsn = f"oracle+oracledb://{user_name}:{password}@{host}:{port}/{service_name}"
     return create_engine(dsn)
 
 def cadastrarDadosImpressoras(dataframe):
