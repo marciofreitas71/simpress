@@ -82,22 +82,47 @@ def inserir_contagem_impressoras(df_remoto):
     # print(df_local)
     print()
     # print("Dados do banco remoto")
-    print(df_remoto)
+    # print(df_remoto)
     # df_remoto.to_csv("dataframe_remoto.csv", sep=';')
     # df_zeros = df_remoto.loc[df_remoto['CONTADOR_TOTAL'] == 0]
     # print(df_zeros)
 
   
-    # TODO criar laço para iterar no dataframe com valores iguais a zero.
+    # TODO criar iteração no dataframe para fazer a busca por valores iguais a zero.
+    # ...
+
+
     df_remoto.sort_values(by='DATA_LEITURA', ascending=True, inplace=True)
     for index, row in df_remoto.iterrows():
         if row['CONTADOR_TOTAL'] == 0:
-            print(index, row['PRINTERDEVICEID'],row['DATA_LEITURA'], row['CONTADOR_TOTAL'])
+            print(index, row['PRINTERDEVICEID'], row['DATA_LEITURA'], row['CONTADOR_TOTAL'])
+            
+            # Procura no webservice a impressora com valores não nulos para copiar os valores
+            # de contador_cor e contador_pb neste dataframe onde os valores são nulos
+            search_payload = {
+                'printerDeviceID': row['PRINTERDEVICEID'],
+                'startDate': (pd.to_datetime(row['DATA_LEITURA'], format='%Y-%m-%d') - pd.DateOffset(days=1)).strftime('%Y-%m-%d'),
+                'endDate': (row['DATA_LEITURA'] - pd.DateOffset(days=1)).strftime('%Y-%m-%d')
+            }
+
+            try:
+                # Recupera os dados do webservice para a impressora específica e data anterior
+                previous_day_data = recuperar_dados_webservice(wsdl_url, service_method, search_payload, timeout=5)
+
+                # Se houver valores, copia para o dataframe original
+                if not previous_day_data.empty:
+                    df_remoto.at[index, 'CONTADOR_PB'] = previous_day_data.iloc[0]['ReferenceMono']
+                    df_remoto.at[index, 'CONTADOR_COR'] = previous_day_data.iloc[0]['ReferenceColor']
+
+            except Exception as e:
+                logging.error(f"Erro ao recuperar dados do webservice para a impressora {row['PRINTERDEVICEID']}: {str(e)}")
+
     
-    # TODO buscar nos dados do webservice (dia anterior) os valores não nulos para cada impressora encontrada no passo anterior
+                
+    # TODO buscar nos dados do webservice (dia anterior ao da coleta de dados) os valores não nulos para cada impressora encontrada no passo anterior
     # TODO se houver valores no dia anterior, preencher os dados do banco com os valores não nulos recuperados
     # TODO se não houver valor na data anterior, procurar as outras datas até achar uma com valores não nulos
-    # TODO 
+  
 
 
 # Dados api
