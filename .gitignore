@@ -1,6 +1,6 @@
 # ignore todos os arquivos das pastas:
 venv/
-__pycache__
+__pycache__/
 .env
 config.py
 
