@@ -2,7 +2,7 @@ from datetime import datetime
 import zeep
 import pandas as pd
 import repository_gestao_impressoras as repo
-import config
+import config as config
 from dotenv import load_dotenv
 import logging
 
@@ -79,10 +79,10 @@ def inserir_contagem_impressoras(df_remoto):
     # df_local = repo.recuperarDadosLocaisImpressoras()
        
     # print("Dados do banco local")
-    # print(df_local)
+    print(df_local)
     print()
     # print("Dados do banco remoto")
-    # print(df_remoto)
+    print(df_remoto)
     # df_remoto.to_csv("dataframe_remoto.csv", sep=';')
     # df_zeros = df_remoto.loc[df_remoto['CONTADOR_TOTAL'] == 0]
     # print(df_zeros)
@@ -92,30 +92,30 @@ def inserir_contagem_impressoras(df_remoto):
     # ...
 
 
-    df_remoto.sort_values(by='DATA_LEITURA', ascending=True, inplace=True)
-    for index, row in df_remoto.iterrows():
-        if row['CONTADOR_TOTAL'] == 0:
-            print(index, row['PRINTERDEVICEID'], row['DATA_LEITURA'], row['CONTADOR_TOTAL'])
+    # df_remoto.sort_values(by='DATA_LEITURA', ascending=True, inplace=True)
+    # for index, row in df_remoto.iterrows():
+    #     if row['CONTADOR_TOTAL'] == 0:
+    #         print(index, row['PRINTERDEVICEID'], row['DATA_LEITURA'], row['CONTADOR_TOTAL'])
             
-            # Procura no webservice a impressora com valores não nulos para copiar os valores
-            # de contador_cor e contador_pb neste dataframe onde os valores são nulos
-            search_payload = {
-                'printerDeviceID': row['PRINTERDEVICEID'],
-                'startDate': (pd.to_datetime(row['DATA_LEITURA'], format='%Y-%m-%d') - pd.DateOffset(days=1)).strftime('%Y-%m-%d'),
-                'endDate': (row['DATA_LEITURA'] - pd.DateOffset(days=1)).strftime('%Y-%m-%d')
-            }
+    #         # Procura no webservice a impressora com valores não nulos para copiar os valores
+    #         # de contador_cor e contador_pb neste dataframe onde os valores são nulos
+    #         search_payload = {
+    #             'printerDeviceID': row['PRINTERDEVICEID'],
+    #             'startDate': (pd.to_datetime(row['DATA_LEITURA'], format='%Y-%m-%d') - pd.DateOffset(days=1)).strftime('%Y-%m-%d'),
+    #             'endDate': (row['DATA_LEITURA'] - pd.DateOffset(days=1)).strftime('%Y-%m-%d')
+    #         }
 
-            try:
-                # Recupera os dados do webservice para a impressora específica e data anterior
-                previous_day_data = recuperar_dados_webservice(wsdl_url, service_method, search_payload, timeout=5)
+    #         try:
+    #             # Recupera os dados do webservice para a impressora específica e data anterior
+    #             previous_day_data = recuperar_dados_webservice(wsdl_url, service_method, search_payload, timeout=5)
 
-                # Se houver valores, copia para o dataframe original
-                if not previous_day_data.empty:
-                    df_remoto.at[index, 'CONTADOR_PB'] = previous_day_data.iloc[0]['ReferenceMono']
-                    df_remoto.at[index, 'CONTADOR_COR'] = previous_day_data.iloc[0]['ReferenceColor']
+    #             # Se houver valores, copia para o dataframe original
+    #             if not previous_day_data.empty:
+    #                 df_remoto.at[index, 'CONTADOR_PB'] = previous_day_data.iloc[0]['ReferenceMono']
+    #                 df_remoto.at[index, 'CONTADOR_COR'] = previous_day_data.iloc[0]['ReferenceColor']
 
-            except Exception as e:
-                logging.error(f"Erro ao recuperar dados do webservice para a impressora {row['PRINTERDEVICEID']}: {str(e)}")
+    #         except Exception as e:
+    #             logging.error(f"Erro ao recuperar dados do webservice para a impressora {row['PRINTERDEVICEID']}: {str(e)}")
 
     
                 
