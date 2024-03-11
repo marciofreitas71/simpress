@@ -125,17 +125,14 @@ def inserir_contagem_impressoras(df_remoto):
   
 
 
-# Dados api
-wsdl_url = config.wsdl_url
-service_method = config.service_method
-output_csv = config.output_csv
-payload = config.payload
+if __name__ == "__main__":
+    
+    wsdl_url = config.wsdl_url
+    service_method = config.service_method
+    output_csv = config.output_csv
+    payload = config.payload
 
-#insert_printer('output-reference-2023-10-17.csv', 'HP')
-#send_soap_request_and_write_to_csv(wsdl_url, service_method, output_csv, payload)
-df_remoto = recuperar_dados_webservice(wsdl_url, service_method, payload,timeout=5)
+    df_remoto = recuperar_dados_webservice(wsdl_url, service_method, payload, timeout=5)
+    df_local = repo.recuperarDadosLocaisImpressoras()
 
-# dfContagem = inserir_contagem_impressoras(dfContagem)
-df_local = repo.recuperarDadosLocaisImpressoras()
-
-inserir_contagem_impressoras(df_remoto)
+    inserir_contagem_impressoras(df_remoto)
