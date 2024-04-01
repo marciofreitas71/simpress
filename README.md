@@ -1,6 +1,10 @@
 # Simpress
 
-## Automação para registrar contagem diária de impressõees.
+## Automação para registrar contagem diária de impressões.
+
+Este projeto tem como objetivo disponibilizar no BI as informações sobre as impressões na Simpress. 
+
+## 
 
 ### Credenciais
 Para evitar a exposição das credenciais foram criados os arquivos .env e config.py. 
