@@ -4,5 +4,6 @@ __pycache__/
 .env
 config.py
 simpress_env/
+testes/
 
 
