@@ -82,7 +82,6 @@ def inserir_contagem_impressoras(df_remoto):
     print(df_remoto)
     df_remoto.to_csv("df_remoto.csv")
 
-
     # Iterando sobre o DF_REMOTO até achar uma impressora com dados zerados
     for index, row in df_remoto.iterrows():
         if (row["CONTADOR_PB"] or row["CONTADOR_COR"]) == 0:
