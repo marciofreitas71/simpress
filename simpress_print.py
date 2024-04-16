@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import zeep
 import pandas as pd
 import repository_gestao_impressoras as repo
@@ -75,17 +75,49 @@ def inserir_contagem_impressoras(df_remoto):
     df_remoto.columns = df_remoto.columns.str.upper()
     df_remoto['CONTADOR_TOTAL'] = df_remoto['CONTADOR_PB'] + df_remoto['CONTADOR_COR']
     
-       
-    # print(df_local)
-    # print()
-    # print("Dados do banco remoto")
-    print(df_remoto)
-    df_remoto.to_csv("df_remoto.csv")
-
+def transforma_df_remoto(df_remoto):
     # Iterando sobre o DF_REMOTO até achar uma impressora com dados zerados
+    # Crie um dicionário vazio para armazenar os dados das impressoras
+    impressoras = {
+        "DATA_LEITURA": [],
+        "PRINTERDEVICEID": [],
+        "CONTADOR_PB": [],
+        "CONTADOR_COR": []
+    }
+
+    # Iterar sobre o DataFrame df_remoto
     for index, row in df_remoto.iterrows():
-        if (row["CONTADOR_PB"] or row["CONTADOR_COR"]) == 0:
-            print(row["DATA_LEITURA"], row["PRINTERDEVICEID"], row["PRINTERMODELNAME"], row["CONTADOR_PB"], row["CONTADOR_COR"],)
+        if row["CONTADOR_PB"] == 0 or row["CONTADOR_COR"] == 0:
+            # Se qualquer contador for zero, adicione os dados relevantes ao dicionário impressoras
+            impressoras["DATA_LEITURA"].append(row["DATA_LEITURA"])
+            impressoras["PRINTERDEVICEID"].append(row["PRINTERDEVICEID"])
+            impressoras["CONTADOR_PB"].append(row["CONTADOR_PB"])
+            impressoras["CONTADOR_COR"].append(row["CONTADOR_COR"])
+
+    # Crie um DataFrame a partir do dicionário impressoras
+    impressoras_df = pd.DataFrame(impressoras)
+    # Exibir o DataFrame com os dados das impressoras
+    print(impressoras_df)
+            
+    # Armazenar a data do dia anterior
+    days = 3
+    data_atual = datetime.now()
+    data_anterior = data_atual - timedelta(days)
+
+    # Converter a data anterior para o formato desejado
+    data_anterior_formatada = data_anterior.strftime('%Y-%m-%d 02:00:00')
+
+    print(data_anterior_formatada)
+
+    # Carrega dados do dia anterior
+
+
+    
+    # Recuperar os dados do dia anterior
+
+    # 
+    # Se a impressora 
+    # Vefificar se a impressora de mesmo id tem valores diferentes de zero
      
 
 if __name__ == "__main__":
