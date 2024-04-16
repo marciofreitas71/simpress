@@ -85,18 +85,19 @@ def transforma_df_remoto(df_remoto):
         "CONTADOR_COR": []
     }
 
-    # Iterar sobre o DataFrame df_remoto
-    for index, row in df_remoto.iterrows():
-        if row["CONTADOR_PB"] == 0 or row["CONTADOR_COR"] == 0:
-            # Se qualquer contador for zero, adicione os dados relevantes ao dicionário impressoras
-            impressoras["DATA_LEITURA"].append(row["DATA_LEITURA"])
-            impressoras["PRINTERDEVICEID"].append(row["PRINTERDEVICEID"])
-            impressoras["CONTADOR_PB"].append(row["CONTADOR_PB"])
-            impressoras["CONTADOR_COR"].append(row["CONTADOR_COR"])
+    impressoras_df = df_remoto[(df == 0).any(axis=1)]
+    # # Iterar sobre o DataFrame df_remoto
+    # for index, row in df_remoto.iterrows():
+    #     if row["CONTADOR_PB"] == 0 or row["CONTADOR_COR"] == 0:
+    #         # Se qualquer contador for zero, adicione os dados relevantes ao dicionário impressoras
+    #         impressoras["DATA_LEITURA"].append(row["DATA_LEITURA"])
+    #         impressoras["PRINTERDEVICEID"].append(row["PRINTERDEVICEID"])
+    #         impressoras["CONTADOR_PB"].append(row["CONTADOR_PB"])
+    #         impressoras["CONTADOR_COR"].append(row["CONTADOR_COR"])
 
-    # Crie um DataFrame a partir do dicionário impressoras
-    impressoras_df = pd.DataFrame(impressoras)
-    # Exibir o DataFrame com os dados das impressoras
+    # # Crie um DataFrame a partir do dicionário impressoras
+    # impressoras_df = pd.DataFrame(impressoras)
+    # # Exibir o DataFrame com os dados das impressoras
     print(impressoras_df)
             
     # Armazenar a data do dia anterior
@@ -107,7 +108,7 @@ def transforma_df_remoto(df_remoto):
     # Converter a data anterior para o formato desejado
     data_anterior_formatada = data_anterior.strftime('%Y-%m-%d 02:00:00')
 
-    print(data_anterior_formatada)
+    # print(data_anterior_formatada)
 
     # Carrega dados do dia anterior
 
