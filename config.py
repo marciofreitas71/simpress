@@ -10,7 +10,7 @@ payload = {
     'dealerUserPassword': '8lYKAfLbl2FKqAJgWWRA5Q==',
     # 'dateTimeStart': '2023-01-01 00:00:00',
     # 'dateTimeEnd': '2024-04-11 02:00:00',
-    'dateTimeEnd': datetime.now().strftime('%Y-%m-%d %H%M%S'),
+    'dateTimeEnd': f"{datetime.now().strftime('%Y-%m-%d')} 02:00:00" ,
     'maxLimitDaysEarlier': 1,
     'enterpriseName': '9853_TRE_BA',
     'serialNumber': '',
