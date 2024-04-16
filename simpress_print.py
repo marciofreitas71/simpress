@@ -76,37 +76,20 @@ def inserir_contagem_impressoras(df_remoto):
     df_remoto['CONTADOR_TOTAL'] = df_remoto['CONTADOR_PB'] + df_remoto['CONTADOR_COR']
     
 def transforma_df_remoto(df_remoto):
-    # Iterando sobre o DF_REMOTO até achar uma impressora com dados zerados
-    # Crie um dicionário vazio para armazenar os dados das impressoras
-    impressoras = {
-        "DATA_LEITURA": [],
-        "PRINTERDEVICEID": [],
-        "CONTADOR_PB": [],
-        "CONTADOR_COR": []
-    }
-
-    impressoras_df = df_remoto[(df == 0).any(axis=1)]
-    # # Iterar sobre o DataFrame df_remoto
-    # for index, row in df_remoto.iterrows():
-    #     if row["CONTADOR_PB"] == 0 or row["CONTADOR_COR"] == 0:
-    #         # Se qualquer contador for zero, adicione os dados relevantes ao dicionário impressoras
-    #         impressoras["DATA_LEITURA"].append(row["DATA_LEITURA"])
-    #         impressoras["PRINTERDEVICEID"].append(row["PRINTERDEVICEID"])
-    #         impressoras["CONTADOR_PB"].append(row["CONTADOR_PB"])
-    #         impressoras["CONTADOR_COR"].append(row["CONTADOR_COR"])
-
-    # # Crie um DataFrame a partir do dicionário impressoras
-    # impressoras_df = pd.DataFrame(impressoras)
+    # Cria um dataframe contendo as impressoras com valores iguais a 0
+    impressoras_df = df_remoto[(df_remoto['ReferenceMono'] == 0) | (df_remoto['ReferenceColor'] == 0)]      
+   
     # # Exibir o DataFrame com os dados das impressoras
+    print('Imprime impressoras zeradas')
     print(impressoras_df)
             
-    # Armazenar a data do dia anterior
-    days = 3
-    data_atual = datetime.now()
-    data_anterior = data_atual - timedelta(days)
+    # # Armazenar a data do dia anterior
+    # days = 3
+    # data_atual = config.datetime
+    # data_anterior = data_atual - timedelta(days)
 
-    # Converter a data anterior para o formato desejado
-    data_anterior_formatada = data_anterior.strftime('%Y-%m-%d 02:00:00')
+    # # Converter a data anterior para o formato desejado
+    # data_anterior_formatada = data_anterior.strftime('%Y-%m-%d 02:00:00')
 
     # print(data_anterior_formatada)
 
@@ -129,6 +112,8 @@ if __name__ == "__main__":
     payload = config.payload
 
     df_remoto = recuperar_dados_webservice(wsdl_url, service_method, payload, timeout=5)
-    df_local = repo.recuperarDadosLocaisImpressoras()
 
-    inserir_contagem_impressoras(df_remoto)
+    print(df_remoto.columns)
+    # df_local = repo.recuperarDadosLocaisImpressoras()
+
+    transforma_df_remoto(df_remoto)
