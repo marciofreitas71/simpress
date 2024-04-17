@@ -43,11 +43,12 @@ def insert_printer(input_csv, brand_name):
 
     repo.cadastrarDadosImpressoras(df)
 
-def recuperar_dados_webservice(wsdl_url, service_method, payload, timeout=5, dateTimeEnd):
+def recuperar_dados_webservice(wsdl_url, service_method, payload, dateTimeEnd, timeout=5):
     logging.info("Executando a função recuperar_dados_webservice... ")
 
-    config.payload['dateTimeEnd'] = dateTimeEnd
-    
+    # Atualize o payload com a nova dateTimeEnd
+    payload['dateTimeEnd'] = dateTimeEnd
+
     try:
         # Criar um cliente SOAP usando a URL do WSDL com timeout
         client = zeep.Client(wsdl=wsdl_url, transport=zeep.Transport(timeout=timeout))
@@ -77,14 +78,25 @@ def inserir_contagem_impressoras(df_remoto):
     df_remoto.columns = df_remoto.columns.str.upper()
     df_remoto['CONTADOR_TOTAL'] = df_remoto['CONTADOR_PB'] + df_remoto['CONTADOR_COR']
     
-def transforma_df_remoto(df_remoto):
+def transforma_df_remoto():
+    
+    # Definindo as configurações
+    dateTimeEnd = f"{datetime.now().strftime('%Y-%m-%d')} 02:00:00"
+    wsdl_url = config.wsdl_url
+    service_method = config.service_method
+    output_csv = config.output_csv
+    payload = config.payload
+    timeout = 5
+
+    # Chame a função recuperar_dados_webservice() com dateTimeEnd como argumento adicional
+    df_remoto = recuperar_dados_webservice(wsdl_url, service_method, payload, dateTimeEnd, timeout=timeout)
+
     # Cria um dataframe contendo as impressoras com valores iguais a 0
     impressoras_df = df_remoto[(df_remoto['ReferenceMono'] == 0) | (df_remoto['ReferenceColor'] == 0)]      
    
-    # # Exibir o DataFrame com os dados das impressoras
-    print('Imprime impressoras zeradas')
-    print(impressoras_df)
-            
+    
+    print(df_remoto)
+    
     # # Armazenar a data do dia anterior
     # days = 3
     # data_atual = config.datetime
@@ -108,14 +120,4 @@ def transforma_df_remoto(df_remoto):
 
 if __name__ == "__main__":
     
-    wsdl_url = config.wsdl_url
-    service_method = config.service_method
-    output_csv = config.output_csv
-    payload = config.payload
-
-    df_remoto = recuperar_dados_webservice(wsdl_url, service_method, dateTimeEnd, payload, timeout=5)
-
-    print(df_remoto.columns)
-    # df_local = repo.recuperarDadosLocaisImpressoras()
-
-    transforma_df_remoto(df_remoto)
+   transforma_df_remoto()
