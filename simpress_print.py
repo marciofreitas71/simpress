@@ -43,9 +43,11 @@ def insert_printer(input_csv, brand_name):
 
     repo.cadastrarDadosImpressoras(df)
 
-def recuperar_dados_webservice(wsdl_url, service_method, payload, timeout=5):
+def recuperar_dados_webservice(wsdl_url, service_method, payload, timeout=5, dateTimeEnd):
     logging.info("Executando a função recuperar_dados_webservice... ")
 
+    config.payload['dateTimeEnd'] = dateTimeEnd
+    
     try:
         # Criar um cliente SOAP usando a URL do WSDL com timeout
         client = zeep.Client(wsdl=wsdl_url, transport=zeep.Transport(timeout=timeout))
@@ -111,7 +113,7 @@ if __name__ == "__main__":
     output_csv = config.output_csv
     payload = config.payload
 
-    df_remoto = recuperar_dados_webservice(wsdl_url, service_method, payload, timeout=5)
+    df_remoto = recuperar_dados_webservice(wsdl_url, service_method, dateTimeEnd, payload, timeout=5)
 
     print(df_remoto.columns)
     # df_local = repo.recuperarDadosLocaisImpressoras()
