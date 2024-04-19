@@ -1,7 +1,5 @@
 from datetime import datetime
 
-
-
 wsdl_url = 'https://api-counters.nddprint.com/CountersWS/CountersData.asmx?WSDL'
 service_method = 'GetReferenceCountersData' #'GetPlainCountersData'
 output_csv = 'output-reference-2023-10-27.csv' #'output-plain-2023-10-15.csv'
