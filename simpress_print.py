@@ -92,15 +92,17 @@ def transforma_df_remoto():
     df_remoto = recuperar_dados_webservice(wsdl_url, service_method, payload, dateTimeEnd, timeout=timeout)
 
     # Cria um dataframe contendo as impressoras com valores iguais a 0
-    impressoras_df = df_remoto[(df_remoto['ReferenceMono'] == 0) | (df_remoto['ReferenceColor'] == 0)]      
-   
+    impressoras_com_zero = df_remoto[(df_remoto['ReferenceMono'] == 0) | (df_remoto['ReferenceColor'] == 0)]      
+    df_remoto.to_csv(f"testes/df_remoto-{dateTimeEnd[:11]}.csv")
     
-    print(df_remoto)
-    
-    # # Armazenar a data do dia anterior
-    # days = 3
-    # data_atual = config.datetime
-    # data_anterior = data_atual - timedelta(days)
+    # Converta dateTimeEnd em um objeto datetime
+    data_atual = datetime.strptime(dateTimeEnd, "%Y-%m-%d %H:%M:%S")
+
+    # Armazenar a data do dia anterior
+    days = 3
+    data_anterior = data_atual - timedelta(days=days)
+    print(data_anterior)
+
 
     # # Converter a data anterior para o formato desejado
     # data_anterior_formatada = data_anterior.strftime('%Y-%m-%d 02:00:00')
