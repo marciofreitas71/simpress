@@ -5,6 +5,7 @@ import repository_gestao_impressoras as repo
 import config as config
 from dotenv import load_dotenv
 import logging
+import re
 
 load_dotenv()
 
@@ -62,7 +63,8 @@ def recuperar_dados_webservice(wsdl_url, service_method, payload, dateTimeEnd, t
 
         # Analisar a string de resposta em objetos Python
         df = pd.read_json(response)
-        return df
+        # Filtrando para que apenas as impressoras HP sejam mostradas
+        return df.loc[df['BrandName'] == 'HP']
     except zeep.exceptions.Fault as e:
         logging.error(f"Erro durante a execução da função: {str(e)}")
         # Você pode decidir levantar a exceção novamente ou retornar um valor padrão, dependendo do caso.
@@ -90,6 +92,7 @@ def transforma_df_remoto():
 
     # Chame a função recuperar_dados_webservice() com dateTimeEnd como argumento adicional
     df_remoto = recuperar_dados_webservice(wsdl_url, service_method, payload, dateTimeEnd, timeout=timeout)
+    df_remoto.to_csv(f'arquivos/df_remoto.csv')
 
     # Armazena a data atual
     data_atual = datetime.strptime(dateTimeEnd, "%Y-%m-%d %H:%M:%S")
@@ -141,11 +144,17 @@ def transforma_df_remoto():
                         df_remoto.at[index, 'ReferenceColor'] = ReferenceColor_anterior                        
                         print(f'Valor anterior: {PrinterDeviceID}')
                         print(f'Valor atual: {ReferenceColor_anterior}')
+            
 
         # Atualiza a data atual para o dia anterior se os valores ainda estiverem vazios
         if df_remoto[(df_remoto['ReferenceMono'] == 0) | (df_remoto['ReferenceColor'] == 0)].any(axis=None):
             data_anterior -= timedelta(days=1)
-            print(data_anterior)
+            print(f'Verificado os dados no dataframe do dia {(data_anterior).strftime('%d/%m/%Y')}')
+            print()
+                        
+            # Supondo que data_anterior seja seu carimbo de data e hora
+            formatted_timestamp = data_anterior.strftime("%Y-%m-%d_%H-%M-%S")
+            df_remoto_2.to_csv(f"arquivos/df_remoto_2-{formatted_timestamp}.csv")
                         
         #     # Verifica se há valores zero em 'ReferenceMono' ou 'ReferenceColor'
         #     registros_zerados = df_remoto[(df_remoto['ReferenceMono'] == 0) | (df_remoto['ReferenceColor'] == 0)].shape[0]
@@ -154,10 +163,6 @@ def transforma_df_remoto():
         #     print("Número de registros com valores zerados:", registros_zerados)
 
             
-
-    
-        
-
     # # Converter a data anterior para o formato desejado
     # data_anterior_formatada = data_anterior.strftime('%Y-%m-%d 02:00:00')
 
