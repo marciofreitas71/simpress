@@ -1,9 +1,16 @@
 from sqlalchemy import create_engine, Table, Column, Integer, MetaData, DateTime, String
 from sqlalchemy.sql import select
 from sqlalchemy import select
-import pandas as pd
-import os
 from dotenv import load_dotenv
+from datetime import datetime
+import config as config
+import pandas as pd
+import logging
+import zeep
+import re
+import os
+
+
 
 load_dotenv()
 
@@ -166,7 +173,15 @@ def insert_printer(input_csv, brand_name):
 
     repo.cadastrarDadosImpressoras(df)
 
-def recuperar_dados_webservice(wsdl_url, service_method, payload, dateTimeEnd, timeout=5):
+def recuperar_dados_webservice(dateTimeEnd):
+    
+    dateTimeEnd = f"{datetime.now().strftime('%Y-%m-%d')} 02:00:00"
+    wsdl_url = config.wsdl_url
+    service_method = config.service_method
+    output_csv = config.output_csv
+    payload = config.payload
+    timeout = 5   
+        
     logging.info("Executando a função recuperar_dados_webservice... ")
 
     # Atualize o payload com a nova dateTimeEnd
