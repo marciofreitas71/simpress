@@ -6,6 +6,7 @@ import config as config
 from dotenv import load_dotenv
 import logging
 import re
+import os
 
 load_dotenv()
 
@@ -95,7 +96,7 @@ def transforma_df_remoto():
     df_remoto.to_csv(f'arquivos/df_remoto.csv')
 
     # Armazena a data atual
-    data_atual = datetime.strptime(dateTimeEnd, "%Y-%m-%d %H:%M:%S")
+    data_atual = datetime.strptime('2022-10-05 02:00:00', '%Y-%m-%d %H:%M:%S')
 
     # Inicializa df_remoto_2 como None
     df_remoto_2 = None
@@ -145,17 +146,21 @@ def transforma_df_remoto():
                         print(f'Valor anterior: {PrinterDeviceID}')
                         print(f'Valor atual: {ReferenceColor_anterior}')
             
+            
 
         # Atualiza a data atual para o dia anterior se os valores ainda estiverem vazios
         if df_remoto[(df_remoto['ReferenceMono'] == 0) | (df_remoto['ReferenceColor'] == 0)].any(axis=None):
             data_anterior -= timedelta(days=1)
-            print(f'Verificado os dados no dataframe do dia {(data_anterior).strftime('%d/%m/%Y')}')
             print()
                         
             # Supondo que data_anterior seja seu carimbo de data e hora
             formatted_timestamp = data_anterior.strftime("%Y-%m-%d_%H-%M-%S")
             df_remoto_2.to_csv(f"arquivos/df_remoto_2-{formatted_timestamp}.csv")
+            print(f'Arquivo salvo com os dados do dia {(data_anterior).strftime('%d/%m/%Y')}')
+            # Limpa o console
+            os.system('cls')
                         
+        
         #     # Verifica se há valores zero em 'ReferenceMono' ou 'ReferenceColor'
         #     registros_zerados = df_remoto[(df_remoto['ReferenceMono'] == 0) | (df_remoto['ReferenceColor'] == 0)].shape[0]
             
