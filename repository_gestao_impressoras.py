@@ -48,24 +48,32 @@ def cadastrarContagemImpressoras(dataframe):
     # Fecha a conexão com o banco de dados
     engine.dispose()
 
-def recuperarDadosImpressoras(dataframe):
+def recuperarDadosImpressoras():
     engine = getConnection()
     
-    # cria objeto Metadata
+    # Cria objeto Metadata
     metadata = MetaData()
 
-    # associa objeto de conexão ao Metadata
+    # Associa objeto de conexão ao Metadata
     metadata.bind = engine
 
     table = Table(
         'impressora',
         metadata,
         autoload_with=engine
-        )
-    
-    # criar uma expressão SQL dinâmica com a condição de atualização
-    unique_values_list = list(dataframe['SERIALNUMBER'].unique())
-    query = select(table.columns['id'], table.columns['serialnumber']).where(table.columns['serialnumber'].in_(unique_values_list))
+    )
+
+    # Cria uma expressão SQL dinâmica para selecionar todas as colunas
+    query = select(
+        table.columns['id'],
+        table.columns['printerdeviceid'], 
+        table.columns['printerbrandname'],
+        table.columns['printermodelname'],
+        table.columns['serialnumber'],
+        table.columns['created_at'],
+        table.columns['status']
+    )
+
     resultdf = pd.DataFrame()
 
     # Executa a consulta
@@ -73,21 +81,20 @@ def recuperarDadosImpressoras(dataframe):
         conn.begin()
         try:
             result = conn.execute(query)
-            #Constroi DataFrame com os resultados da consulta
-            sql_data = pd.DataFrame(result.fetchall(), columns=['IMPRESSORA_ID', 'SERIALNUMBER'])
-            resultdf = pd.merge(dataframe, sql_data, how='right', on='SERIALNUMBER')
-            #print(resultdf)
-            #trans.commit()
+            # Constroi DataFrame com os resultados da consulta
+            resultdf = pd.DataFrame(result.fetchall(), columns=result.keys())
+            resultdf = resultdf.sort_values(by='printerdeviceid')
         except:
-            #trans.rollback()
             raise
         finally:
             conn.close()
 
     # Fecha a conexão com o banco de dados
     engine.dispose()
-    # print(sql_data)
     return resultdf
+
+
+
 
 def recuperarDadosLocaisImpressoras():
     engine = getConnection()
@@ -173,9 +180,9 @@ def insert_printer(input_csv, brand_name):
 
     repo.cadastrarDadosImpressoras(df)
 
-def recuperar_dados_webservice(dateTimeEnd):
+def recuperar_dados_webservice(data):
     
-    dateTimeEnd = f"{datetime.now().strftime('%Y-%m-%d')} 02:00:00"
+    dateTimeEnd = f"{data} 02:00:00"
     wsdl_url = config.wsdl_url
     service_method = config.service_method
     output_csv = config.output_csv
