@@ -6,7 +6,6 @@ payload = {
     'dealerUserEmail': 'xxxxx@xxx.com.br',
     'dealerUserPassword': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
     #'dateTimeStart': '2023-10-17 00:00:00',
-    'dateTimeEnd': '',
     'maxLimitDaysEarlier': 1,
     'enterpriseName': '9853_TRE_BA',
     'serialNumber': '',
