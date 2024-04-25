@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from datetime import datetime
 import config as config
 import pandas as pd
+from io import StringIO
 import logging
 import zeep
 import re
@@ -155,7 +156,7 @@ def send_soap_request_and_write_to_csv(wsdl_url, service_method, output_csv, pay
     response = method_to_call(**payload)
     
     # Parse the response string into Python objects
-    df = pd.read_json(response)
+    df = pd.read_json(StringIO(response))
     print(df)
     df.to_csv(output_csv, sep=';', index=False)
 
@@ -206,7 +207,7 @@ def recuperar_dados_webservice(data):
         logging.info("Acessar o método do serviço e enviar a solicitação com os dados")
 
         # Analisar a string de resposta em objetos Python
-        df = pd.read_json(response)
+        df = pd.read_json(StringIO(response))
         # Filtrando para que apenas as impressoras HP sejam mostradas
         return df.loc[df['BrandName'] == 'HP']
     except zeep.exceptions.Fault as e:
