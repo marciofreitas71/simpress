@@ -11,10 +11,10 @@ import socket
 
 sys.path.append('D:/projetos/simpress')
 
-import repository_gestao_impressoras as repo
+# # import repository_gestao_impressoras as repo
 
-impressoras = repo.recuperarDadosImpressoras()
-import repository_gestao_impressoras as repo
+# impressoras = repo.recuperarDadosImpressoras()
+# import repository_gestao_impressoras as repo
 
 def gera_arquivo_csv_compilado():
 
