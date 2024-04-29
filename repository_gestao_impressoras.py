@@ -6,6 +6,18 @@ import pandas as pd
 
 load_dotenv()
 
+# Define e mapeia a tabela 'impressora'
+metadata = MetaData()
+impressora = Table('impressora', metadata,
+                   Column('ID', Integer, primary_key=True),
+                   Column('PRINTERDEVICEID', String),
+                   Column('PRINTERBRANDNAME', String),
+                   Column('PRINTERMODELNAME', String),
+                   Column('SERIALNUMBER', String),
+                   Column('CREATED_AT', DateTime),
+                   Column('STATUS', String)
+                   )
+
 def getConnection():
     # Conecta ao banco de dados Oracle
     user_name = os.getenv('user_name')
@@ -24,26 +36,14 @@ def query_impressoras():
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    # Define e mapeia a tabela 'impressora'
-    metadata = MetaData()
-    impressora = Table('impressora', metadata,
-                       Column('ID', Integer, primary_key=True),
-                       Column('PRINTERDEVICEID', String),
-                       Column('PRINTERBRANDNAME', String),
-                       Column('PRINTERMODELNAME', String),
-                       Column('SERIALNUMBER', String),
-                       Column('CREATED_AT', DateTime),
-                       Column('STATUS', String)
-                       )
+    # Executa a consulta (sem usar all())
+    query = session.query(impressora)  # Seleciona a tabela impressora
 
-    # Executa a consulta e carrega os resultados em um DataFrame
-    query = session.query(impressora)
-    df = pd.read_sql(query.statement, engine)
+    # Fecha a sessão (opcional, já que o contexto é gerenciado)
+    # session.close()
 
-    # Fecha a sessão
-    session.close()
+    return query
 
-    return df
 
 def create_impressora(PRINTERDEVICEID, PRINTERBRANDNAME, PRINTERMODELNAME, SERIALNUMBER, CREATED_AT, STATUS):
     # Cria uma instância do mecanismo de conexão
@@ -52,18 +52,6 @@ def create_impressora(PRINTERDEVICEID, PRINTERBRANDNAME, PRINTERMODELNAME, SERIA
     # Cria um objeto de sessão
     Session = sessionmaker(bind=engine)
     session = Session()
-
-    # Define e mapeia a tabela 'impressora'
-    metadata = MetaData()
-    impressora = Table('impressora', metadata,
-                       Column('ID', Integer, primary_key=True),
-                       Column('PRINTERDEVICEID', String),
-                       Column('PRINTERBRANDNAME', String),
-                       Column('PRINTERMODELNAME', String),
-                       Column('SERIALNUMBER', String),
-                       Column('CREATED_AT', DateTime),
-                       Column('STATUS', String)
-                       )
 
     # Cria um novo registro
     novo_registro = impressora.insert().values(
@@ -90,18 +78,6 @@ def update_impressora(ID, PRINTERDEVICEID, PRINTERBRANDNAME, PRINTERMODELNAME, S
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    # Define e mapeia a tabela 'impressora'
-    metadata = MetaData()
-    impressora = Table('impressora', metadata,
-                       Column('ID', Integer, primary_key=True),
-                       Column('PRINTERDEVICEID', String),
-                       Column('PRINTERBRANDNAME', String),
-                       Column('PRINTERMODELNAME', String),
-                       Column('SERIALNUMBER', String),
-                       Column('CREATED_AT', DateTime),
-                       Column('STATUS', String)
-                       )
-
     # Atualiza o registro
     session.query(impressora).filter_by(ID=ID).update({
         'PRINTERDEVICEID': PRINTERDEVICEID,
@@ -124,18 +100,6 @@ def delete_impressora(ID):
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    # Define e mapeia a tabela 'impressora'
-    metadata = MetaData()
-    impressora = Table('impressora', metadata,
-                       Column('ID', Integer, primary_key=True),
-                       Column('PRINTERDEVICEID', String),
-                       Column('PRINTERBRANDNAME', String),
-                       Column('PRINTERMODELNAME', String),
-                       Column('SERIALNUMBER', String),
-                       Column('CREATED_AT', DateTime),
-                       Column('STATUS', String)
-                       )
-
     # Deleta o registro
     session.query(impressora).filter_by(ID=ID).delete()
 
@@ -143,6 +107,7 @@ def delete_impressora(ID):
     session.commit()
     session.close()
 
-# Executa a consulta e imprime os resultados
-impressoras_df = query_impressoras()
-print(impressoras_df)
+# # Executa a consulta e imprime os resultados
+impressoras = pd.DataFrame(query_impressoras())
+
+print(impressoras)
