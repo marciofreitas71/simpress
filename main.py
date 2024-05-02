@@ -1,16 +1,16 @@
 from datetime import datetime, timedelta
 import pandas as pd
-import config
+import config as config
 import repository_gestao_impressoras as repo
 from datetime import datetime
 import os
 
 # dateTimeEnd = f"{datetime.now().strftime('%Y-%m-%d')} 02:00:00"
-# wsdl_url = config.wsdl_url
-# service_method = config.service_method
-# output_csv = config.output_csv
-# payload = config.payload
-# timeout = 5
+wsdl_url = config.wsdl_url
+service_method = config.service_method
+output_csv = config.output_csv
+payload = config.payload
+timeout = 5
 
   
 def transforma_dados_webservice():
@@ -19,7 +19,7 @@ def transforma_dados_webservice():
     dateTimeEnd = f"{datetime.now().strftime('%Y-%m-%d')} 02:00:00"
  
     # Chame a função recuperar_dados_webservice() com dateTimeEnd como argumento adicional
-    dados_webservice = repo.recuperar_dados_webservice(dateTimeEnd)
+    dados_webservice = repo.recuperar_dados_webservice(wsdl_url, service_method, payload, timeout=5)
     dados_webservice.to_csv(f'arquivos/dados_webservice.csv')
 
     # Armazena a data final

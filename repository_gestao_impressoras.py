@@ -3,6 +3,9 @@ from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, 
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 import pandas as pd
+import config
+import logging
+import zeep
 
 load_dotenv()
 
@@ -27,6 +30,32 @@ def getConnection():
     service_name = os.getenv('service_name')
     dsn = f"oracle+oracledb://{user_name}:{password}@{host}:{port}/{service_name}"
     return create_engine(dsn)
+
+def recuperar_dados_webservice(wsdl_url, service_method, payload, timeout=5):
+    logging.info("Executando a função recuperar_dados_webservice... ")
+
+    try:
+        # Criar um cliente SOAP usando a URL do WSDL com timeout
+        client = zeep.Client(wsdl=wsdl_url, transport=zeep.Transport(timeout=timeout))
+        logging.info("Criado um cliente SOAP usando a URL do WSDL com timeout")
+
+        # Acessar o método do serviço e enviar a solicitação com os dados
+        service = client.service
+        method_to_call = getattr(service, service_method)
+        response = method_to_call(**payload)
+        logging.info("Acessar o método do serviço e enviar a solicitação com os dados")
+
+        # Analisar a string de resposta em objetos Python
+        df = pd.read_json(response)
+        return df
+    except zeep.exceptions.Fault as e:
+        logging.error(f"Erro durante a execução da função: {str(e)}")
+        # Você pode decidir levantar a exceção novamente ou retornar um valor padrão, dependendo do caso.
+        raise
+    except zeep.exceptions.TransportError as e:
+        logging.error(f"Erro de transporte durante a execução da função: {str(e)}")
+        # Trate o erro de transporte conforme necessário
+        raise
 
 def query_impressoras():
     # Cria uma instância do mecanismo de conexão
@@ -107,7 +136,4 @@ def delete_impressora(ID):
     session.commit()
     session.close()
 
-# # Executa a consulta e imprime os resultados
-impressoras = pd.DataFrame(query_impressoras())
 
-print(impressoras)
