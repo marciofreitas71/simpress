@@ -2,6 +2,7 @@ import os
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, DateTime
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
+from datetime import datetime
 import pandas as pd
 import config
 import logging
@@ -31,8 +32,17 @@ def getConnection():
     dsn = f"oracle+oracledb://{user_name}:{password}@{host}:{port}/{service_name}"
     return create_engine(dsn)
 
+
+
 def recuperar_dados_webservice(wsdl_url, service_method, payload, timeout=5):
     logging.info("Executando a função recuperar_dados_webservice... ")
+
+    dateTimeEnd = f"{datetime.now().strftime('%Y-%m-%d')} 02:00:00"
+    wsdl_url = config.wsdl_url
+    service_method = config.service_method
+    output_csv = config.output_csv
+    payload = config.payload
+    timeout = 5
 
     try:
         # Criar um cliente SOAP usando a URL do WSDL com timeout
