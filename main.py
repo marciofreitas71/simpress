@@ -5,7 +5,7 @@ import repository_gestao_impressoras as repo
 from datetime import datetime
 import os
 
-# dateTimeEnd = f"{datetime.now().strftime('%Y-%m-%d')} 02:00:00"
+dateTimeEnd = f"{datetime.now().strftime('%Y-%m-%d')} 02:00:00"
 wsdl_url = config.wsdl_url
 service_method = config.service_method
 output_csv = config.output_csv
