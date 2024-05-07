@@ -1,11 +1,11 @@
+from app.database import create_database, getConnection
+from app.models import Base, ContagemImpressoras, Impressoras
+from app.crud import CRUD
 from datetime import datetime, timedelta
 import pandas as pd
 import config as config
 import repository_gestao_impressoras as repo
-from datetime import datetime
 import os
-
-
 
   
 def transforma_dados_webservice():
@@ -95,7 +95,6 @@ def transforma_dados_webservice():
 
     # print(data_anterior_formatada)
 
-     
 
 if __name__ == "__main__":
     
@@ -104,5 +103,21 @@ if __name__ == "__main__":
     payload = config.payload
     timeout = 5
     
-    transforma_dados_webservice()
-  
+      # Criar a instância CRUD
+    crud = CRUD()
+
+    # Criar o banco de dados, se ainda não existir
+    crud.create_database()
+
+    # Exemplo de uso do CRUD
+    # Ler uma impressora pelo ID
+    impressora_lida = crud.read_impressora(printer_device_id=1)
+    if impressora_lida:
+        print("Impressora encontrada:")
+        print("ID:", impressora_lida.PRINTERDEVICEID)
+        print("Marca:", impressora_lida.PRINTERBRANDNAME)
+        print("Modelo:", impressora_lida.PRINTERMODELNAME)
+        print("Número de Série:", impressora_lida.SERIALNUMBER)
+        print("Status:", impressora_lida.STATUS)
+    else:
+        print("Impressora não encontrada.")
