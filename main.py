@@ -1,4 +1,5 @@
 from app import  database, crud, models, queries
+import pandas as pd
 
 if __name__ == "__main__":
         
@@ -15,3 +16,7 @@ if __name__ == "__main__":
     
         
     
+    df = pd.read_csv('testes/arquivos_final/arquivo_final-06-04-2024.csv')
+    print(df)
+    for index, row in df.iterrows():
+        create_contagem_impressoras
