@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
 import repository_gestao_impressoras as repo
+import pandas as pd
+import csv
 
 def obter_hostname_por_ip(ip):
     try:
@@ -35,4 +37,25 @@ def salva_dados_csv():
         # Atualiza a data para o dia anterior
         DateTimeEnd -= timedelta(days=1)
 
-salva_dados_csv()
+# Função para inserir os dados das impressoras do arquivo CSV no banco de dados
+def inserir_impressoras_from_csv(nome_arquivo):
+    # Ler o arquivo CSV para um DataFrame do Pandas
+    df = pd.read_csv(nome_arquivo)
+
+    # Iterar sobre as linhas do DataFrame
+    for index, linha in df.iterrows():
+        # Extrair os valores dos campos do DataFrame
+        PRINTERDEVICEID = linha['PrinterDeviceID']
+        PRINTERBRANDNAME = linha['BrandName']
+        PRINTERMODELNAME = linha['PrinterModelName']
+        SERIALNUMBER = linha['SerialNumber']
+        CREATED_AT = (datetime.now()).strftime('%Y-%m-%d %H:%M:%S.%f')  # Converter para objeto datetime
+        STATUS = 1  # Definir o status como 1
+        
+        # Chamar a função create_impressora para inserir os dados no banco de dados
+        repo.create_impressora(PRINTERDEVICEID, PRINTERBRANDNAME, PRINTERMODELNAME, SERIALNUMBER, CREATED_AT, STATUS)
+
+# Chamada da função para inserir os dados do arquivo CSV no banco de dados
+inserir_impressoras_from_csv('testes/arquivos_final/arquivo_final-06-04-2024.csv')
+
+

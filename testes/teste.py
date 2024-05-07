@@ -16,10 +16,7 @@ sys.path.append('D:/projetos/simpress')
 # impressoras = repo.recuperarDadosImpressoras()
 # import repository_gestao_impressoras as repo
 
-def gera_arquivo_csv_compilado():
-
-    # Diretório contendo os arquivos CSV
-    pasta = 'arquivos/'
+def gera_arquivo_csv_compilado(pasta):
 
     # Lista para armazenar os DataFrames de cada arquivo CSV
     dataframes = []
@@ -32,13 +29,13 @@ def gera_arquivo_csv_compilado():
             # Lê o arquivo CSV e adiciona ao lista de DataFrames
             df = pd.read_csv(caminho_arquivo)
             dataframes.append(df)
-            print(f'{len(df)} - {arquivo} ')
+            print(f'Dados adicionados do arquivo {arquivo}')
 
-    # # Concatena todos os DataFrames em um único DataFrame
-    # df_final = pd.concat(dataframes, ignore_index=True)
+    # Concatena todos os DataFrames em um único DataFrame
+    df_final = pd.concat(dataframes, ignore_index=True)
 
-    # # Salva o DataFrame final em um arquivo CSV
-    # df_final.to_csv('testes/arquivo_final.csv', index=False)
+    # Salva o DataFrame final em um arquivo CSV
+    df_final.to_csv('testes/arquivo_final-06-04-2024.csv', index=False)
 
 # Impressoras informadas por bruno
 def df_impressoras():
@@ -93,8 +90,12 @@ def extrair_id_zona(ip):
     else:
         return "Padrão de IP não corresponde"
 
-# Substitua 'endereco_ip' pelo endereço IP real que você deseja verificar
-endereco_ip = "10.5.203.75 (network)"  # Exemplo de endereço IP
+# # Substitua 'endereco_ip' pelo endereço IP real que você deseja verificar
+# endereco_ip = "10.5.203.75 (network)"  # Exemplo de endereço IP
 
-hostname = obter_hostname_por_ip(endereco_ip)
-print(f"O hostname para o IP {endereco_ip} é: {hostname}")
+# hostname = obter_hostname_por_ip(endereco_ip)
+# print(f"O hostname para o IP {endereco_ip} é: {hostname}")
+
+pasta = 'D:/projetos/simpress/testes/'
+
+gera_arquivo_csv_compilado(pasta)

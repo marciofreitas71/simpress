@@ -5,12 +5,7 @@ import repository_gestao_impressoras as repo
 from datetime import datetime
 import os
 
-dateTimeEnd = f"{datetime.now().strftime('%Y-%m-%d')} 02:00:00"
-wsdl_url = config.wsdl_url
-service_method = config.service_method
-output_csv = config.output_csv
-payload = config.payload
-timeout = 5
+
 
   
 def transforma_dados_webservice():
@@ -104,4 +99,10 @@ def transforma_dados_webservice():
 
 if __name__ == "__main__":
     
-   transforma_dados_webservice()
+    wsdl_url = config.wsdl_url
+    service_method = config.service_method
+    payload = config.payload
+    timeout = 5
+    
+    transforma_dados_webservice()
+  

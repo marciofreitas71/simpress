@@ -108,6 +108,8 @@ def create_impressora(PRINTERDEVICEID, PRINTERBRANDNAME, PRINTERMODELNAME, SERIA
     # Commit e fecha a sessão
     session.commit()
     session.close()
+    return f'Impressora {PRINTERDEVICEID} incluída com sucesso.'
+
 
 def update_impressora(ID, PRINTERDEVICEID, PRINTERBRANDNAME, PRINTERMODELNAME, SERIALNUMBER, CREATED_AT, STATUS):
     # Cria uma instância do mecanismo de conexão
