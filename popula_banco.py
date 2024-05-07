@@ -57,5 +57,3 @@ def inserir_impressoras_from_csv(nome_arquivo):
 
 # Chamada da função para inserir os dados do arquivo CSV no banco de dados
 inserir_impressoras_from_csv('testes/arquivos_final/arquivo_final-06-04-2024.csv')
-
-
