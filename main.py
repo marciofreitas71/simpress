@@ -12,6 +12,6 @@ if __name__ == "__main__":
         created_at = datetime.datetime.now()
 
         # crud.create_contagem_impressoras(impressora_id, contador_pb, contador_cor, contador_total, data_leitura, created_at)
-    crud.read_contagem_impressoras(1)
+    
         
     

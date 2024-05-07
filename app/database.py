@@ -1,5 +1,8 @@
-import cx_Oracle
+from dotenv import load_dotenv
+import oracledb
 import os
+
+load_dotenv()
 
 def get_connection():
     user_name = os.getenv('user_name')
@@ -11,6 +14,5 @@ def get_connection():
     if None in [user_name, password, host, port, service_name]:
         raise ValueError("Erro: Algum valor necessário está ausente.")
 
-    dsn_tns = cx_Oracle.makedsn(host, port, service_name=service_name)
-    connection = cx_Oracle.connect(user=user_name, password=password, dsn=dsn_tns)
+    connection = oracledb.connect(user=user_name, password=password, host=host, port=port, service_name=service_name)
     return connection

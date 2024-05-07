@@ -1,11 +1,11 @@
-import database
+from app import database
 
 def create_contagem_impressoras(impressora_id, contador_pb, contador_cor, contador_total, data_leitura, created_at):
     connection = database.get_connection()
     cursor = connection.cursor()
 
     insert_query = """
-    INSERT INTO contagem_impressoras (IMPRESSORA_ID, CONTADOR_PB, CONTADOR_COR, CONTADOR_TOTAL, DATA_LEITURA, CREATED_AT)
+    INSERT INTO contagem_impressora (IMPRESSORA_ID, CONTADOR_PB, CONTADOR_COR, CONTADOR_TOTAL, DATA_LEITURA, CREATED_AT)
     VALUES (:impressora_id, :contador_pb, :contador_cor, :contador_total, :data_leitura, :created_at)
     """
     cursor.execute(insert_query, {
@@ -26,7 +26,7 @@ def read_contagem_impressoras(impressora_id):
     cursor = connection.cursor()
 
     select_query = """
-    SELECT * FROM contagem_impressoras WHERE IMPRESSORA_ID = :impressora_id
+    SELECT * FROM contagem_impressora WHERE IMPRESSORA_ID = :impressora_id
     """
     cursor.execute(select_query, {'impressora_id': impressora_id})
     result = cursor.fetchone()
@@ -36,12 +36,12 @@ def read_contagem_impressoras(impressora_id):
 
     return result
 
-def update_contagem_impressoras(impressora_id, contador_pb=None, contador_cor=None, contador_total=None, data_leitura=None):
+def update_contagem_impressora(impressora_id, contador_pb=None, contador_cor=None, contador_total=None, data_leitura=None):
     connection = database.get_connection()
     cursor = connection.cursor()
 
     update_query = """
-    UPDATE contagem_impressoras
+    UPDATE contagem_impressora
     SET CONTADOR_PB = :contador_pb,
         CONTADOR_COR = :contador_cor,
         CONTADOR_TOTAL = :contador_total,
@@ -60,12 +60,12 @@ def update_contagem_impressoras(impressora_id, contador_pb=None, contador_cor=No
     cursor.close()
     connection.close()
 
-def delete_contagem_impressoras(impressora_id):
+def delete_contagem_impressora(impressora_id):
     connection = database.get_connection()
     cursor = connection.cursor()
 
     delete_query = """
-    DELETE FROM contagem_impressoras WHERE IMPRESSORA_ID = :impressora_id
+    DELETE FROM contagem_impressora WHERE IMPRESSORA_ID = :impressora_id
     """
     cursor.execute(delete_query, {'impressora_id': impressora_id})
 
