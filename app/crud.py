@@ -1,6 +1,6 @@
 from app import database
 
-def create_contagem_impressoras(impressora_id, contador_pb, contador_cor, contador_total, data_leitura, created_at):
+def create_impressoras(impressora_id, contador_pb, contador_cor, contador_total, data_leitura, created_at):
     connection = database.get_connection()
     cursor = connection.cursor()
 
@@ -65,7 +65,7 @@ def delete_contagem_impressora(impressora_id):
     cursor = connection.cursor()
 
     delete_query = """
-    DELETE FROM contagem_impressora WHERE IMPRESSORA_ID = :impressora_id
+    DELETE FROM contagem_impressoras WHERE IMPRESSORA_ID = :impressora_id
     """
     cursor.execute(delete_query, {'impressora_id': impressora_id})
 
