@@ -96,6 +96,6 @@ def extrair_id_zona(ip):
 # hostname = obter_hostname_por_ip(endereco_ip)
 # print(f"O hostname para o IP {endereco_ip} é: {hostname}")
 
-pasta = 'D:/projetos/simpress/testes/'
+pasta = 'D:/projetos/simpress/testes/arquivos_final'
 
 gera_arquivo_csv_compilado(pasta)
