@@ -2,7 +2,7 @@ import os
 from sqlalchemy import create_engine
 import pandas as pd
 from dotenv import load_dotenv
-import repository_gestao_impressoras as repo
+from app import repository_gestao_impressoras as repo
 
 load_dotenv()
 
