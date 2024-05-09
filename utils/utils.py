@@ -1,3 +1,9 @@
+from app import config
+from app import webservice
+from datetime import datetime, timedelta
+import pandas as pd
+import os
+
 def insere_dados_csv_to_bd():
     """
     Insere registros do webservice a partir de um arquivo csv.
@@ -16,32 +22,32 @@ def insere_dados_csv_to_bd():
 
     Se ocorrer algum erro durante a inserção, uma mensagem de erro é impressa, e o programa continua a execução.
     """
-        df = pd.read_csv('testes/arquivos_final/arquivo_final-06-04-2024.csv')
-        total = len(df)
-        contagem = 10024
+    df = pd.read_csv('testes/arquivos_final/arquivo_final-06-04-2024.csv')
+    total = len(df)
+    contagem = 10024
 
 
-        # # # print(df.columns)
-        for index, row in df.iterrows():
-        
-            # String com a data
-            data_string = row['RealDateCapture']
+    # # # print(df.columns)
+    for index, row in df.iterrows():
+    
+        # String com a data
+        data_string = row['RealDateCapture']
 
-            # Converter a string em um objeto datetime
-            data_datetime = datetime.strptime(data_string, '%Y-%m-%d')
+        # Converter a string em um objeto datetime
+        data_datetime = datetime.strptime(data_string, '%Y-%m-%d')
 
 
-            try:
-                # Tentar inserir os dados
-                crud.create_contagem_impressoras(row['PrinterDeviceID'], row['ReferenceMono'], row['ReferenceColor'], data_datetime)
-                print(f"Registro  ({row['PrinterDeviceID']}) inserido com sucesso.")
-            except Exception as e:
-                # Capturar qualquer exceção e imprimir uma mensagem de erro
-                print(f"Erro ao inserir registro de contagem - impressora {row['PrinterDeviceID']}: {str(e)}")
-                print(f'{row['SerialNumber']} - {row['DateTimeRead']}')
-            contagem += 1
-            print(f'Inseridos {contagem} de {total}')
-            os.system('cls')
+        try:
+            # Tentar inserir os dados
+            crud.create_contagem_impressoras(row['PrinterDeviceID'], row['ReferenceMono'], row['ReferenceColor'], data_datetime)
+            print(f"Registro  ({row['PrinterDeviceID']}) inserido com sucesso.")
+        except Exception as e:
+            # Capturar qualquer exceção e imprimir uma mensagem de erro
+            print(f"Erro ao inserir registro de contagem - impressora {row['PrinterDeviceID']}: {str(e)}")
+            print(f'{row['SerialNumber']} - {row['DateTimeRead']}')
+        contagem += 1
+        print(f'Inseridos {contagem} de {total}')
+        os.system('cls')
 
 def inserir_impressoras_from_csv(nome_arquivo):
 
@@ -73,9 +79,9 @@ def inserir_impressoras_from_csv(nome_arquivo):
             # Se não existe, criar a impressora
             repo.create_impressora(PRINTERDEVICEID, PRINTERBRANDNAME, PRINTERMODELNAME, SERIALNUMBER, CREATED_AT, STATUS)
 
-def salva_dados_csv(DateTimeEnd,service_method, payload, timeout, wsdl_url):
-     """
-    Insere impressoras a partir de um arquivo CSV no banco de dados.
+def salva_dados_csv(DateTimeEnd):
+    """
+    Insere registros de impressoras a partir de um arquivo CSV no banco de dados.
 
     Args:
         nome_arquivo (str): O caminho do arquivo CSV contendo os dados das impressoras.
@@ -95,24 +101,32 @@ def salva_dados_csv(DateTimeEnd,service_method, payload, timeout, wsdl_url):
     >>> inserir_impressoras_from_csv('caminho/do/arquivo.csv')
     """
     
-   # Quantidade de dias anteriores à data final
+    # Quantidade de dias anteriores à data final    
     dias = 1
-
     while dias < 800:
         # Recupera dados do webservice
-        dados_webservice = repo.recuperar_dados_webservice(wsdl_url, service_method, payload)
+        dados_webservice = webservice.recuperar_dados(DateTimeEnd)
         
         # Adiciona a nova coluna com a DateTimeEnd
-        dados_webservice['RealDataCapture'] = DateTimeEnd.strftime('%Y-%m-%d')
+        dados_webservice['RealDataCapture'] = DateTimeEnd
         
-        # Salva os dados em um arquivo CSV
-        dados_webservice.to_csv(f'testes/arquivos_final/dados-{DateTimeEnd.strftime("%Y-%m-%d")}.csv', index=False)
-        
-        print(f'Dados do dia {DateTimeEnd.strftime("%Y-%m-%d")} processados e salvos')
-        
+        # Verifica se o arquivo existe
+        if not os.path.isfile(f'testes/arquivos_final/dados-{DateTimeEnd}.csv'):
+
+            # Salva os dados em um arquivo CSV
+            dados_webservice.to_csv(f'testes/arquivos_final/dados-{DateTimeEnd}.csv', index=False)
+            
+            print(f'Dados do dia {DateTimeEnd} processados e salvos')
+        else:
+            print(f'O arquivo referente ao dia {DateTimeEnd} já foi gerado')
+            
         dias += 1       
         # Atualiza a data para o dia anterior
+        
+        DateTimeEnd = datetime.strptime(DateTimeEnd, '%Y-%m-%d')
         DateTimeEnd -= timedelta(days=1)
+        # Converter o datetime em uma string
+        DateTimeEnd = DateTimeEnd.strftime('%Y-%m-%d')
 
 
 def obter_hostname_por_ip(ip):
@@ -145,3 +159,182 @@ def obter_hostname_por_ip(ip):
         return "Hostname não encontrado"
     except socket.gaierror:
         return "Endereço IP inválido"
+
+def gera_arquivo_csv_compilado(pasta):
+
+    # Lista para armazenar os DataFrames de cada arquivo CSV
+    dataframes = []
+
+    # Itera sobre os arquivos na pasta
+    for arquivo in os.listdir(pasta):
+        if arquivo.endswith('.csv'):
+            # Caminho completo para o arquivo
+            caminho_arquivo = os.path.join(pasta, arquivo)
+            # Lê o arquivo CSV e adiciona ao lista de DataFrames
+            df = pd.read_csv(caminho_arquivo)
+            dataframes.append(df)
+            print(f'Dados adicionados do arquivo {arquivo}')
+
+    # Concatena todos os DataFrames em um único DataFrame
+    df_final = pd.concat(dataframes, ignore_index=True)
+
+    # Salva o DataFrame final em um arquivo CSV
+    df_final.to_csv('testes/arquivo_final-06-04-2024.csv', index=False)
+
+# Impressoras informadas por bruno
+def df_impressoras():
+    file = 'data/Impressoras Outsourcing - HP.csv'
+    df = pd.read_csv(file)
+    return df
+
+# Função para retornar o hostname a partir do ip
+def obter_hostname_por_ip(ip):
+    try:
+        hostname = socket.gethostbyaddr(ip[:-10])
+        return hostname[0]  # O nome do host está na primeira posição da tupla retornada
+    except socket.herror:
+        return "Hostname não encontrado"
+    except socket.gaierror:
+        return "Endereço IP inválido"
+
+# Funcao para extrair o número de zona do ip
+def extrair_id_zona(ip):
+    padrao = r'10\.171\.(\d+)\.60'
+    correspondencia = re.match(padrao, ip)
+    if correspondencia:
+        return correspondencia.group(1)
+    else:
+        return "Padrão de IP não corresponde"
+
+
+def insere_websersvice_banco():
+
+    # Carregando os dados e convertendo 'DateTimeRead' para datetime
+    dados_webservice = pd.read_csv('arquivos/dados-teste.csv')
+    dados_webservice['DateTimeRead'] = pd.to_datetime(dados_webservice['DateTimeRead'])
+
+    # Filtrando registros anteriores a 01/01/2024
+    registros_anteriores = (dados_webservice[dados_webservice['RealDataCapture'] < '2024-01-01']).sort_values(by='DateTimeRead',ascending=False )
+
+    # Carregando a lista de impressoras
+    todas_impressoras = pd.read_csv('data/todas_impressoras.csv')
+
+    # Inicializando variáveis
+    data_limite = pd.to_datetime('2024-01-01')
+    qtd_impressoras = len(todas_impressoras)
+    num_impressora = 1
+    lista_dataframes = []  # Lista para armazenar DataFrames temporários
+
+    # Iterando sobre as impressoras
+    for impressora in todas_impressoras['SerialNumber']:
+
+        # Lista vazia para armazenar registros da impressora atual
+        lista_registros = []
+
+        # Iterando sobre os registros
+        for indice, registro in dados_webservice.iterrows():
+
+            # Verificando se o registro pertence à impressora e data limite
+            if registro['SerialNumber'] == impressora and registro['DateTimeRead'] < data_limite:
+
+                # Encontrando o último registro da impressora antes de 01/01/2024
+                ultimo_registro = registro.copy()
+
+                # Atualizando data para 01/01/2024
+                ultimo_registro['DateTimeRead'] = '2024-01-01'
+                ultimo_registro['RealDataCapture'] = '2024-01-01'
+
+                # Adicionando o registro à lista temporária
+                lista_registros.append(ultimo_registro)
+
+        # Se houver registros para a impressora, cria um DataFrame e concatena na lista
+        if lista_registros:
+            df_impressora = pd.concat(lista_registros)
+            lista_dataframes.append(df_impressora)
+
+        # Atualizando contadores
+        num_impressora += 1
+
+    # Salvando o DataFrame final (concatenação final)
+    arquivo_final = pd.concat(lista_dataframes)
+    arquivo_final.to_csv('arquivo_final2.csv')
+
+def gera_arquivo_csv_compilado(pasta):
+
+    # Lista para armazenar os DataFrames de cada arquivo CSV
+    dataframes = []
+
+    # Itera sobre os arquivos na pasta
+    for arquivo in os.listdir(pasta):
+        if arquivo.endswith('.csv'):
+            # Caminho completo para o arquivo
+            caminho_arquivo = os.path.join(pasta, arquivo)
+            # Lê o arquivo CSV e adiciona ao lista de DataFrames
+            df = pd.read_csv(caminho_arquivo)
+            dataframes.append(df)
+            print(f'Dados adicionados do arquivo {arquivo}')
+
+    # Concatena todos os DataFrames em um único DataFrame
+    df_final = pd.concat(dataframes, ignore_index=True)
+
+    # Salva o DataFrame final em um arquivo CSV
+    df_final.to_csv('testes/arquivo_final-06-04-2024.csv', index=False)
+
+# Impressoras informadas por bruno
+def df_impressoras():
+    file = 'data/Impressoras Outsourcing - HP.csv'
+    df = pd.read_csv(file)
+    return df
+
+# Busca no dataset todas as impressoras que geraram dados
+def verifica_impressoras_dataset():
+    file = 'testes/arquivo_final.csv'
+    df = pd.read_csv(file)
+    # filtra todos os valores únicos das impressoras
+    # tomando como base o SerialNumber
+    ids_impressoras = df['SerialNumber'].unique()
+    print(len(ids_impressoras))
+    
+
+def ler_arquivo_compilado():
+    file = 'testes/arquivo_final.csv'
+    df = pd.read_csv(file)
+    return df
+
+# Transorma arquivo compilado para que as lacunas nas datas sejam preenchidas
+def transforma_arquivos():
+    file = 'testes/arquivo_final.csv'
+    df = pd.read_csv(file)
+    
+    # for index, rows in df.iterrows():
+    #     # armazena a data real do relatório
+    #     RealDataCapture = datetime.strptime(rows['RealDataCapture'], '%Y-%m-%d').date()        
+    #     # armazena a da que será retornada do webservice
+    #     DateTimeRead = datetime.strptime(rows['DateTimeRead'], "%Y-%m-%dT%H:%M:%S").date()      
+    #     print(DateTimeRead == RealDataCapture)
+
+
+# Função para retornar o hostname a partir do ip
+def obter_hostname_por_ip(ip):
+    try:
+        hostname = socket.gethostbyaddr(ip[:-10])
+        return hostname[0]  # O nome do host está na primeira posição da tupla retornada
+    except socket.herror:
+        return "Hostname não encontrado"
+    except socket.gaierror:
+        return "Endereço IP inválido"
+
+# Funcao para extrair o número de zona do ip
+def extrair_id_zona(ip):
+    padrao = r'10\.171\.(\d+)\.60'
+    correspondencia = re.match(padrao, ip)
+    if correspondencia:
+        return correspondencia.group(1)
+    else:
+        return "Padrão de IP não corresponde"
+
+# # Substitua 'endereco_ip' pelo endereço IP real que você deseja verificar
+# endereco_ip = "10.5.203.75 (network)"  # Exemplo de endereço IP
+
+# hostname = obter_hostname_por_ip(endereco_ip)
+# print(f"O hostname para o IP {endereco_ip} é: {hostname}")

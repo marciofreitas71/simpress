@@ -16,6 +16,7 @@ payload = {
     'dealerName': 'XXXXX',  # Nome do revendedor autorizado
     'dealerUserEmail': 'xxxxx@xxx.com.br',  # E-mail do usuário do revendedor
     'dealerUserPassword': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',  # Senha do usuário do revendedor
+     'dateTimeEnd': "",
     # 'dateTimeStart': '2023-10-17 00:00:00',  # Data e hora de início (opcional)
     'maxLimitDaysEarlier': 1,  # Limite máximo de dias anteriores para recuperar os dados
     'enterpriseName': '9853_TRE_BA',  # Nome da empresa ou organização
