@@ -119,7 +119,7 @@ def create_contagem_impressoras(impressora_id, contador_pb, contador_cor, data_l
 
 
 def read_contagem_impressoras(impressora_id):
-     """
+    """
     Lê os registros de contagem de impressoras do banco de dados.
 
     Args:

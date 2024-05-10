@@ -1,7 +1,8 @@
-from app import config
-from app import webservice
+# from app import config
+# from app import webservice
 from datetime import datetime, timedelta
 import pandas as pd
+import glob
 import os
 
 def insere_dados_csv_to_bd():
@@ -35,7 +36,6 @@ def insere_dados_csv_to_bd():
 
         # Converter a string em um objeto datetime
         data_datetime = datetime.strptime(data_string, '%Y-%m-%d')
-
 
         try:
             # Tentar inserir os dados
@@ -179,7 +179,7 @@ def gera_arquivo_csv_compilado(pasta):
     df_final = pd.concat(dataframes, ignore_index=True)
 
     # Salva o DataFrame final em um arquivo CSV
-    df_final.to_csv('testes/arquivo_final-06-04-2024.csv', index=False)
+    df_final.to_csv('testes/arquivos_final/arquivo_final-06-04-2024.csv', index=False)
 
 # Impressoras informadas por bruno
 def df_impressoras():
@@ -278,7 +278,7 @@ def gera_arquivo_csv_compilado(pasta):
     df_final = pd.concat(dataframes, ignore_index=True)
 
     # Salva o DataFrame final em um arquivo CSV
-    df_final.to_csv('testes/arquivo_final-06-04-2024.csv', index=False)
+    df_final.to_csv('testes/arquivo_final-10-05-2024.csv', index=False)
 
 # Impressoras informadas por bruno
 def df_impressoras():
@@ -338,3 +338,5 @@ def extrair_id_zona(ip):
 
 # hostname = obter_hostname_por_ip(endereco_ip)
 # print(f"O hostname para o IP {endereco_ip} é: {hostname}")
+
+gera_arquivo_csv_compilado('D:/projetos/simpress/testes/arquivos_final')
