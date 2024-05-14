@@ -1,5 +1,5 @@
-# from app import config
-# from app import webservice
+from app import config
+from app import webservice
 from datetime import datetime, timedelta
 import pandas as pd
 import glob
@@ -79,7 +79,7 @@ def inserir_impressoras_from_csv(nome_arquivo):
             # Se não existe, criar a impressora
             repo.create_impressora(PRINTERDEVICEID, PRINTERBRANDNAME, PRINTERMODELNAME, SERIALNUMBER, CREATED_AT, STATUS)
 
-def salva_dados_csv(DateTimeEnd):
+def salva_dados_csv(DateTimeStart, DateTimeEnd):
     """
     Insere registros de impressoras a partir de um arquivo CSV no banco de dados.
 

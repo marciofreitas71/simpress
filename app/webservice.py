@@ -4,6 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 from datetime import datetime
 import pandas as pd
+from app import webservice
 from app import config
 import logging
 import zeep
