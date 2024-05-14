@@ -2,7 +2,7 @@ import os
 from io import StringIO
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
-from datetime import datetime
+from datetime import datetime, timedelta
 import pandas as pd
 from app import webservice
 from app import config
@@ -11,12 +11,12 @@ import zeep
 
 load_dotenv()
 
-def recuperar_dados(dataTimeEnd):
+def recuperar_dados(data):
         """
         Recupera dados de um serviço da web SOAP.
 
         Args:
-            dataTimeEnd (str): Data e hora de término para a consulta.
+            dataTimeEnd (str): Data da consulta no formato 'dd-mm-yyyy'.
 
         Returns:
             DataFrame: Um DataFrame Pandas contendo os dados recuperados do serviço da web.
@@ -27,8 +27,18 @@ def recuperar_dados(dataTimeEnd):
         """
         logging.info("Executando a função recuperar_dados_webservice... ")
 
+
+        # Converter para objeto datetime
+        data_objeto = datetime.strptime(data, "%d-%m-%Y")
+
+        # Adicionar um dia
+        data_objeto += timedelta(days=1)
+
+        # Formatar para o novo formato
+        dateTimeEnd = data_objeto.strftime("%Y-%m-%d")
+
         # Atualizar o payload com o dataTimeEnd fornecido
-        config.payload['dateTimeEnd'] = f'{dataTimeEnd} 00:00:00'
+        config.payload['dateTimeEnd'] = f'{dateTimeEnd} 00:00:00'
 
         try:
             # Criar um cliente SOAP usando a URL do WSDL com timeout

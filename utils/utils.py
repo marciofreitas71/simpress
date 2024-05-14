@@ -102,31 +102,32 @@ def salva_dados_csv(DateTimeStart, DateTimeEnd):
     """
     
     # Quantidade de dias anteriores à data final    
-    dias = 1
-    while dias < 800:
+    
+    data = DateTimeEnd
+    while data != DateTimeStart:
         # Recupera dados do webservice
-        dados_webservice = webservice.recuperar_dados(DateTimeEnd)
+        dados_webservice = webservice.recuperar_dados(data)
         
         # Adiciona a nova coluna com a DateTimeEnd
-        dados_webservice['RealDataCapture'] = DateTimeEnd
+        dados_webservice['RealDataCapture'] = data
         
         # Verifica se o arquivo existe
-        if not os.path.isfile(f'testes/arquivos_final/dados-{DateTimeEnd}.csv'):
+        if not os.path.isfile(f'testes/arquivos_final/dados-{data}.csv'):
 
             # Salva os dados em um arquivo CSV
-            dados_webservice.to_csv(f'testes/arquivos_final/dados-{DateTimeEnd}.csv', index=False)
+            dados_webservice.to_csv(f'testes/arquivos_final/dados-{data}.csv', index=False)
             
-            print(f'Dados do dia {DateTimeEnd} processados e salvos')
+            print(f'Dados do dia {data} processados e salvos')
         else:
-            print(f'O arquivo referente ao dia {DateTimeEnd} já foi gerado')
+            print(f'O arquivo referente ao dia {data} já foi gerado')
             
-        dias += 1       
+             
         # Atualiza a data para o dia anterior
         
-        DateTimeEnd = datetime.strptime(DateTimeEnd, '%Y-%m-%d')
-        DateTimeEnd -= timedelta(days=1)
+        data = datetime.strptime(data, '%d-%m-%Y')
+        data -= timedelta(days=1)
         # Converter o datetime em uma string
-        DateTimeEnd = DateTimeEnd.strftime('%Y-%m-%d')
+        data = data.strftime('%d-%m-%Y')
 
 
 def obter_hostname_por_ip(ip):
@@ -338,5 +339,3 @@ def extrair_id_zona(ip):
 
 # hostname = obter_hostname_por_ip(endereco_ip)
 # print(f"O hostname para o IP {endereco_ip} é: {hostname}")
-
-gera_arquivo_csv_compilado('D:/projetos/simpress/testes/arquivos_final')
