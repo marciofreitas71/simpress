@@ -1,7 +1,6 @@
 from app import database
 from datetime import datetime
 
-
 def create_impressora(PRINTERDEVICEID, PRINTERBRANDNAME, PRINTERMODELNAME, SERIALNUMBER):
     
     """
@@ -114,9 +113,6 @@ def create_contagem_impressoras(impressora_id, contador_pb, contador_cor, data_l
     
     cursor.close()
     connection.close()
-
-
-
 
 def read_contagem_impressoras(impressora_id):
     """
