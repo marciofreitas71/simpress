@@ -1,5 +1,7 @@
-# from app import config
-# from app import webservice
+from app import config
+from app import webservice
+import logging
+from app import crud
 from datetime import datetime, timedelta
 import pandas as pd
 import glob
@@ -23,30 +25,45 @@ def insere_dados_csv_to_bd():
 
     Se ocorrer algum erro durante a inserção, uma mensagem de erro é impressa, e o programa continua a execução.
     """
-    df = pd.read_csv('testes/arquivos_final/arquivo_final-06-04-2024.csv')
+    df = pd.read_csv('D:/projetos/simpress/testes/df_merged.csv')
     total = len(df)
-    contagem = 10024
-
-
-    # # # print(df.columns)
-    for index, row in df.iterrows():
     
-        # String com a data
-        data_string = row['RealDateCapture']
+    # Configurar logging
+    logging.basicConfig(level=logging.ERROR, format='%(asctime)s - %(levelname)s - %(message)s')
 
-        # Converter a string em um objeto datetime
-        data_datetime = datetime.strptime(data_string, '%Y-%m-%d')
+    # Supondo que df é seu DataFrame e crud é o módulo ou objeto que você está usando para criar registros
 
+    contagem = 0
+
+    # print(df.columns)
+    for index, row in df.iterrows():
         try:
+            # String com a data no formato '2024-01-01'
+            data_string = row['RealDateCapture']
+            
+            # Converter a string em um objeto datetime
+            data_datetime = datetime.strptime(data_string, '%Y-%m-%d')
+            
+            # Formatar a data para o formato aceito pelo Oracle (YYYY-MM-DD HH24:MI:SS)
+            data_formatada = data_datetime.strftime('%d/%m/%Y')
+            
+            print(f'{row["SerialNumber"]}')
+            
             # Tentar inserir os dados
-            crud.create_contagem_impressoras(row['PrinterDeviceID'], row['ReferenceMono'], row['ReferenceColor'], data_datetime)
-            print(f"Registro  ({row['PrinterDeviceID']}) inserido com sucesso.")
+            crud.create_contagem_impressoras(row['PrinterDeviceID'], row['ReferenceMono'], row['ReferenceColor'], data_formatada)
+            print(f"Registro ({row['PrinterDeviceID']}) inserido com sucesso.")
+        
+        except ValueError as ve:
+            logging.error(f"Erro ao converter data para o registro com PrinterDeviceID {row['PrinterDeviceID']} e SerialNumber {row['SerialNumber']}: {ve}")
+        
+        except KeyError as ke:
+            logging.error(f"Erro ao acessar uma chave inexistente no DataFrame para o registro com PrinterDeviceID {row['PrinterDeviceID']} e SerialNumber {row['SerialNumber']}: {ke}")
+        
         except Exception as e:
-            # Capturar qualquer exceção e imprimir uma mensagem de erro
-            print(f"Erro ao inserir registro de contagem - impressora {row['PrinterDeviceID']}: {str(e)}")
-            print(f'{row['SerialNumber']} - {row['DateTimeRead']}')
+            logging.error(f"Erro ao inserir registro de contagem para o registro com PrinterDeviceID {row['PrinterDeviceID']} e SerialNumber {row['SerialNumber']}: {e}")
+        
         contagem += 1
-        print(f'Inseridos {contagem} de {total}')
+        
         os.system('cls')
 
 def inserir_impressoras_from_csv(nome_arquivo):
@@ -67,7 +84,7 @@ def inserir_impressoras_from_csv(nome_arquivo):
         PRINTERBRANDNAME = linha['BrandName']
         PRINTERMODELNAME = linha['PrinterModelName']
         SERIALNUMBER = linha['SerialNumber']
-
+        
         CREATED_AT = datetime.now()
         STATUS = 1  # Definir o status como 1
 
@@ -108,7 +125,7 @@ def salva_dados_csv(DateTimeEnd):
         dados_webservice = webservice.recuperar_dados(DateTimeEnd)
         
         # Adiciona a nova coluna com a DateTimeEnd
-        dados_webservice['RealDataCapture'] = DateTimeEnd
+        dados_webservice['RealDateCapture'] = DateTimeEnd
         
         # Verifica se o arquivo existe
         if not os.path.isfile(f'testes/arquivos_final/dados-{DateTimeEnd}.csv'):
@@ -339,4 +356,4 @@ def extrair_id_zona(ip):
 # hostname = obter_hostname_por_ip(endereco_ip)
 # print(f"O hostname para o IP {endereco_ip} é: {hostname}")
 
-gera_arquivo_csv_compilado('D:/projetos/simpress/testes/arquivos_final')
+
