@@ -5,6 +5,7 @@ from app import crud
 from datetime import datetime, timedelta
 import pandas as pd
 import glob
+import csv
 import os
 
 def insere_dados_csv_to_bd():
@@ -13,7 +14,7 @@ def insere_dados_csv_to_bd():
 
     Lê um arquivo CSV contendo dados do webservice e insere esses registros em um banco de dados.
     
-    Arquivo CSV esperado: 'testes/arquivos_final/arquivo_final-06-04-2024.csv'
+    Arquivo CSV esperado: 'D:/projetos/simpress/testes/df_merged.csv'
     O arquivo deve conter as seguintes colunas:
     - 'RealDateCapture': Data de captura no formato 'YYYY-MM-DD'
     - 'PrinterDeviceID': ID da impressora
@@ -25,46 +26,51 @@ def insere_dados_csv_to_bd():
 
     Se ocorrer algum erro durante a inserção, uma mensagem de erro é impressa, e o programa continua a execução.
     """
-    df = pd.read_csv('D:/projetos/simpress/testes/df_merged.csv')
-    total = len(df)
-    
     # Configurar logging
     logging.basicConfig(level=logging.ERROR, format='%(asctime)s - %(levelname)s - %(message)s')
 
-    # Supondo que df é seu DataFrame e crud é o módulo ou objeto que você está usando para criar registros
-
     contagem = 0
 
-    # print(df.columns)
-    for index, row in df.iterrows():
-        try:
-            # String com a data no formato '2024-01-01'
-            data_string = row['RealDateCapture']
-            
-            # Converter a string em um objeto datetime
-            data_datetime = datetime.strptime(data_string, '%Y-%m-%d')
-            
-            # Formatar a data para o formato aceito pelo Oracle (YYYY-MM-DD HH24:MI:SS)
-            data_formatada = data_datetime.strftime('%d/%m/%Y')
-            
-            print(f'{row["SerialNumber"]}')
-            
-            # Tentar inserir os dados
-            crud.create_contagem_impressoras(row['PrinterDeviceID'], row['ReferenceMono'], row['ReferenceColor'], data_formatada)
-            print(f"Registro ({row['PrinterDeviceID']}) inserido com sucesso.")
+    # Abrir o arquivo CSV e o arquivo de log de erros
+    with open('D:/projetos/simpress/testes/df_filled_2024.csv', mode='r', encoding='utf-8') as csvfile, \
+         open('erros_log.csv', mode='w', newline='', encoding='utf-8') as errorfile:
         
-        except ValueError as ve:
-            logging.error(f"Erro ao converter data para o registro com PrinterDeviceID {row['PrinterDeviceID']} e SerialNumber {row['SerialNumber']}: {ve}")
+        # Criar um leitor CSV em modo iterador
+        reader = pd.read_csv(csvfile, iterator=True, chunksize=1)
+        error_writer = csv.writer(errorfile)
+        error_writer.writerow(['PrinterDeviceID', 'SerialNumber', 'ErrorType', 'ErrorMessage'])
         
-        except KeyError as ke:
-            logging.error(f"Erro ao acessar uma chave inexistente no DataFrame para o registro com PrinterDeviceID {row['PrinterDeviceID']} e SerialNumber {row['SerialNumber']}: {ke}")
-        
-        except Exception as e:
-            logging.error(f"Erro ao inserir registro de contagem para o registro com PrinterDeviceID {row['PrinterDeviceID']} e SerialNumber {row['SerialNumber']}: {e}")
-        
-        contagem += 1
-        
-        os.system('cls')
+        for chunk in reader:
+            for index, row in chunk.iterrows():
+                try:
+                    # String com a data no formato '2024-01-01'
+                    data_string = row['RealDateCapture']
+                    
+                    # Converter a string em um objeto datetime
+                    data_datetime = datetime.strptime(data_string, '%Y-%m-%d')
+                    
+                    print(f'{row["SerialNumber"]}')
+                    
+                    # Tentar inserir os dados
+                    crud.create_contagem_impressoras(row['PrinterDeviceID'], row['ReferenceMono'], row['ReferenceColor'], data_datetime)
+                    print(f"Registro ({row['PrinterDeviceID']}) inserido com sucesso.")
+                
+                except ValueError as ve:
+                    logging.error(f"Erro ao converter data para o registro com PrinterDeviceID {row['PrinterDeviceID']} e SerialNumber {row['SerialNumber']}: {ve}")
+                    error_writer.writerow([row['PrinterDeviceID'], row['SerialNumber'], 'ValueError', str(ve)])
+                
+                except KeyError as ke:
+                    logging.error(f"Erro ao acessar uma chave inexistente no DataFrame para o registro com PrinterDeviceID {row['PrinterDeviceID']} e SerialNumber {row['SerialNumber']}: {ke}")
+                    error_writer.writerow([row['PrinterDeviceID'], row['SerialNumber'], 'KeyError', str(ke)])
+                
+                except Exception as e:
+                    logging.error(f"Erro ao inserir registro de contagem para o registro com PrinterDeviceID {row['PrinterDeviceID']} e SerialNumber {row['SerialNumber']}: {e}")
+                    error_writer.writerow([row['PrinterDeviceID'], row['SerialNumber'], 'Exception', str(e)])
+                
+                contagem += 1
+                print(f'Inserido o registro {contagem}')
+                
+                os.system('cls')
 
 def inserir_impressoras_from_csv(nome_arquivo):
 
@@ -126,7 +132,7 @@ def salva_dados_csv(DateTimeStart, DateTimeEnd):
         dados_webservice = webservice.recuperar_dados(data)
         
         # Adiciona a nova coluna com a DateTimeEnd
-        dados_webservice['RealDateCapture'] = DateTimeEnd
+        dados_webservice['RealDateCapture'] = data
         
         # Verifica se o arquivo existe
         if not os.path.isfile(f'testes/arquivos_final/dados-{data}.csv'):
@@ -279,6 +285,8 @@ def insere_websersvice_banco():
 
 def gera_arquivo_csv_compilado(pasta):
 
+    data = datetime.now().strftime('%d-%m-%Y')
+    
     # Lista para armazenar os DataFrames de cada arquivo CSV
     dataframes = []
 
@@ -296,7 +304,7 @@ def gera_arquivo_csv_compilado(pasta):
     df_final = pd.concat(dataframes, ignore_index=True)
 
     # Salva o DataFrame final em um arquivo CSV
-    df_final.to_csv('testes/arquivo_final-10-05-2024.csv', index=False)
+    df_final.to_csv(f'testes/arquivo_final-{data}.csv', index=False)
 
 # Impressoras informadas por bruno
 def df_impressoras():
