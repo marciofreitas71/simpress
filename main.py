@@ -9,8 +9,8 @@ import zeep
 def main():
     # Chame a função do utils
     
-    utils.salva_dados_csv('01-01-2022', '26-05-2024')
-    utils.gera_arquivo_csv_compilado('D:/projetos/simpress/testes/arquivos_final')
+    # utils.salva_dados_csv('01-01-2022', '26-05-2024')
+    # utils.gera_arquivo_csv_compilado('D:/projetos/simpress/testes/arquivos_final')
     utils.insere_dados_csv_to_bd()
 
     # df = pd.read_csv('testes/data/df_impressoras.csv')

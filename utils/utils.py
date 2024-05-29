@@ -1,5 +1,4 @@
-from app import config
-from app import webservice
+from app import config, webservice
 import logging
 from app import crud
 from datetime import datetime, timedelta
@@ -231,58 +230,29 @@ def extrair_id_zona(ip):
         return "Padrão de IP não corresponde"
 
 
-def insere_websersvice_banco():
+def insere_websersvice_banco(data):
 
-    # Carregando os dados e convertendo 'DateTimeRead' para datetime
-    dados_webservice = pd.read_csv('arquivos/dados-teste.csv')
-    dados_webservice['DateTimeRead'] = pd.to_datetime(dados_webservice['DateTimeRead'])
+    # Data para recuperação dos dados
+    data = datetime.now()
 
-    # Filtrando registros anteriores a 01/01/2024
-    registros_anteriores = (dados_webservice[dados_webservice['RealDataCapture'] < '2024-01-01']).sort_values(by='DateTimeRead',ascending=False )
+    # criar um dataframe 'df_webservice'
+    df_webservice = recuperar_dados(data)
+    
+    # 'DateTimeRead' para datetime
+    df_webservice['DateTimeRead'] = pd.to_datetime(df_webservice['DateTimeRead'])
 
-    # Carregando a lista de impressoras
-    todas_impressoras = pd.read_csv('data/todas_impressoras.csv')
+    # fazer uma consulta no banco de dados (Data do webservice - 1 dia)
+    data_bd = data - 1
 
-    # Inicializando variáveis
-    data_limite = pd.to_datetime('2024-01-01')
-    qtd_impressoras = len(todas_impressoras)
-    num_impressora = 1
-    lista_dataframes = []  # Lista para armazenar DataFrames temporários
+    # Criar um dataframe 'df_database'
+    
+    # comparar os dois datasets para saber quais impressoras do dataframe 'df_database'
+    # estão no dataframe 'df_webservice'
+    # carregar um dataframe com a diferenca entre os dois 'df_diff' 
+    # criar um dataframe 'df_final' concatenando o data 'df_diff' ao 'df_webservice'
+    # inserir no banco de dados os dados do dataframe 'df_final'
 
-    # Iterando sobre as impressoras
-    for impressora in todas_impressoras['SerialNumber']:
-
-        # Lista vazia para armazenar registros da impressora atual
-        lista_registros = []
-
-        # Iterando sobre os registros
-        for indice, registro in dados_webservice.iterrows():
-
-            # Verificando se o registro pertence à impressora e data limite
-            if registro['SerialNumber'] == impressora and registro['DateTimeRead'] < data_limite:
-
-                # Encontrando o último registro da impressora antes de 01/01/2024
-                ultimo_registro = registro.copy()
-
-                # Atualizando data para 01/01/2024
-                ultimo_registro['DateTimeRead'] = '2024-01-01'
-                ultimo_registro['RealDataCapture'] = '2024-01-01'
-
-                # Adicionando o registro à lista temporária
-                lista_registros.append(ultimo_registro)
-
-        # Se houver registros para a impressora, cria um DataFrame e concatena na lista
-        if lista_registros:
-            df_impressora = pd.concat(lista_registros)
-            lista_dataframes.append(df_impressora)
-
-        # Atualizando contadores
-        num_impressora += 1
-
-    # Salvando o DataFrame final (concatenação final)
-    arquivo_final = pd.concat(lista_dataframes)
-    arquivo_final.to_csv('arquivo_final2.csv')
-
+    
 def gera_arquivo_csv_compilado(pasta):
 
     data = datetime.now().strftime('%d-%m-%Y')
