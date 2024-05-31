@@ -1,0 +1,14 @@
+site_name: Simpress
+
+plugins:
+- mkdocstrings:
+    handlers:
+      python:
+        paths: [.]  # actually not needed, default
+
+nav:
+  - Home: index.md
+  - Documentação:
+    - 'docs/docstrings.md'
+
+theme: readthedocs
