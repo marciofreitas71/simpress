@@ -7,5 +7,9 @@ simpress_env/
 testes/
 arquivos/
 data/
-
+.ipynb_checkpoints/
+testes/*.xls
+testes/*.csv
+testes/**/*.xls
+testes/**/*.xls
 
