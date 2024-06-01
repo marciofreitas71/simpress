@@ -1,3 +1,25 @@
+"""
+Este módulo contém funções para manipulação de dados de impressoras e datas utilizando pandas e outras bibliotecas.
+
+Pacotes importados:
+- datetime: Para manipulação de datas e horas.
+- webservice: Módulo de webservice para recuperar dados.
+- tqdm: Para exibir barras de progresso.
+- pandas (pd): Para manipulação de dados em estruturas DataFrame.
+- numpy (np): Para manipulações numéricas.
+- logging: Para registro de eventos e mensagens.
+- os: Para interações com o sistema operacional, como manipulação de arquivos e diretórios.
+- re: Para operações com expressões regulares.
+
+Funções:
+- preenche_dados_csv(caminho_csv): Preenche os dados de um arquivo CSV com informações de impressoras e datas.
+- salva_dados_csv(DateTimeStart, DateTimeEnd): Salva os dados do webservice em arquivos CSV para um intervalo de datas.
+- gera_arquivo_csv_compilado(pasta): Gera um arquivo CSV compilado a partir de vários arquivos CSV em uma pasta.
+- df_impressoras(): Lê os dados de impressoras de um arquivo CSV específico.
+- extrair_id_zona(ip): Extrai o número da zona a partir de um endereço IP.
+"""
+
+
 from datetime import datetime, timedelta
 from app import webservice
 from tqdm import tqdm
