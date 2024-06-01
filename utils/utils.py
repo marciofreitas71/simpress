@@ -5,48 +5,10 @@ from datetime import datetime, timedelta
 import itertools
 import pandas as pd
 import numpy as np
+import socket
 import glob
 import csv
 import os
-
-def inserir_impressoras_from_csv(nome_arquivo):
-    """
-    Insere registros de impressoras a partir de um arquivo CSV no banco de dados.
-
-    Args:
-        nome_arquivo (str): O caminho do arquivo CSV contendo os dados das impressoras.
-
-    Lê um arquivo CSV contendo informações sobre impressoras e as insere no banco de dados.
-    O arquivo CSV deve ter as seguintes colunas:
-    - 'PrinterDeviceID': ID da impressora
-    - 'BrandName': Nome da marca da impressora
-    - 'PrinterModelName': Nome do modelo da impressora
-    - 'SerialNumber': Número de série da impressora
-    
-    As impressoras são inseridas no banco de dados utilizando a função 'create_impressora' do módulo 'repo'.
-    Se uma impressora com o mesmo 'PrinterDeviceID' já existe no banco de dados, a inserção é ignorada.
-    """
-    engine = repo.getConnection()
-    Session = sessionmaker(bind=engine)
-    session = Session()
-    df = pd.read_csv(nome_arquivo)
-
-    for index, linha in df.iterrows():
-        PRINTERDEVICEID = linha['PrinterDeviceID']
-        PRINTERBRANDNAME = linha['BrandName']
-        PRINTERMODELNAME = linha['PrinterModelName']
-        SERIALNUMBER = linha['SerialNumber']
-        
-        CREATED_AT = datetime.now()
-        STATUS = 1
-
-        exists_query = session.query(PRINTERDEVICEID).filter(CONTAGEM_IMPRESSORA.PRINTERDEVICEID == PRINTERDEVICEID).first()
-        if exists_query:
-            print(f"Impressora com PRINTERDEVICEID {PRINTERDEVICEID} já existe no banco de dados. Ignorando inserção.")
-        else:
-            repo.create_impressora(PRINTERDEVICEID, PRINTERBRANDNAME, PRINTERMODELNAME, SERIALNUMBER, CREATED_AT, STATUS)
-
-
 
 def obter_hostname_por_ip(ip):
     """
@@ -70,8 +32,6 @@ def obter_hostname_por_ip(ip):
         return "Hostname não encontrado"
     except socket.gaierror:
         return "Endereço IP inválido"
-
-
 
 def insere_websersvice_banco(data):
     """
