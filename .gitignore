@@ -4,13 +4,10 @@ __pycache__/
 credenciais/.env
 credenciais/config.py
 simpress_env/
-df_remote.csv
 arquivos/
 data/
-testes/*.xls
-testes/*csv
-testes/**/*.xls
-testes/**/*csv
+temp/
+testes/
 .ipynb_checkpoints/
 
 
