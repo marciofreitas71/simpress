@@ -16,7 +16,6 @@ Funções:
 - salva_dados_csv(DateTimeStart, DateTimeEnd): Salva os dados do webservice em arquivos CSV para um intervalo de datas.
 - gera_arquivo_csv_compilado(pasta): Gera um arquivo CSV compilado a partir de vários arquivos CSV em uma pasta.
 - df_impressoras(): Lê os dados de impressoras de um arquivo CSV específico.
-- extrair_id_zona(ip): Extrai o número da zona a partir de um endereço IP.
 """
 
 from datetime import datetime, timedelta
@@ -24,6 +23,7 @@ from tqdm import tqdm
 import pandas as pd
 import numpy as np
 import logging
+import socket
 import sys
 import os
 import re
@@ -166,24 +166,6 @@ def df_impressoras():
     file = 'data/Impressoras Outsourcing - HP.csv'
     df = pd.read_csv(file)
     return df
-
-def extrair_id_zona(ip):
-    """
-    Extrai o número da zona a partir de um endereço IP.
-
-    Args:
-        ip (str): O endereço IP do qual se deseja extrair o número da zona.
-
-    Returns:
-        str: O número da zona extraído do endereço IP, ou uma mensagem de erro se o padrão não corresponder.
-    """
-    # Define o padrão de regex para extrair o número da zona
-    padrao = r'10\.171\.(\d+)\.60'
-    correspondencia = re.match(padrao, ip)
-    if correspondencia:
-        return correspondencia.group(1)
-    else:
-        return "Padrão de IP não corresponde"
 
 if __name__ == "__main__":
     # Configura o registro de logs
