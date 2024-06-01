@@ -8,7 +8,7 @@ from dash.dependencies import Input, Output
 
 # Carregar o arquivo CSV para um DataFrame do pandas
 
-df = pd.read_csv('D:/projetos/simpress/testes/df_filled.csv')
+df = pd.read_csv('../temp/dados_compilados/df_filled.csv')
 
 df['RealDateCapture'] = pd.to_datetime(df['RealDateCapture'], format='%Y-%m-%d')
 
