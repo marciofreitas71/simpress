@@ -1,7 +1,11 @@
-import logging
-import pandas as pd
+from datetime import datetime
 from utils import utils
 from app import crud
+import pandas as pd
+import logging
+import csv
+import os
+import re
 
 def insere_dados_csv_to_bd():
     """

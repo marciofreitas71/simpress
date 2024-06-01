@@ -1,10 +1,11 @@
-import logging
+from datetime import datetime, timedelta
+from app import webservice
+from tqdm import tqdm
 import pandas as pd
 import numpy as np
-from app import webservice
+import logging
 import os
-from datetime import datetime, timedelta
-from tqdm import tqdm
+import re
 
 def preenche_dados_csv(caminho_csv):
     """
