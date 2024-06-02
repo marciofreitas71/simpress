@@ -1,3 +1,19 @@
+"""
+Este módulo cria um aplicativo Dash para visualização de dados de impressoras.
+
+Pacotes importados:
+- os: Para interações com o sistema operacional.
+- pandas as pd: Para manipulação de dados em estruturas DataFrame.
+- plotly.graph_objs as go: Para criação de gráficos interativos.
+- dash: Para criação do aplicativo web.
+- datetime: Para manipulação de datas e horários.
+- dcc, html (dash): Para componentes do layout do aplicativo.
+- Input, Output (dash.dependencies): Para interatividade do aplicativo.
+
+Funções:
+- atualizar_grafico(serial_number_desejado): Atualiza o gráfico com base na impressora selecionada.
+"""
+
 import os
 import pandas as pd
 import plotly.graph_objs as go
@@ -6,48 +22,34 @@ from datetime import datetime
 from dash import dcc, html
 from dash.dependencies import Input, Output
 
-# Carregar o arquivo CSV para um DataFrame do pandas
-
 df = pd.read_csv('../temp/dados_compilados/df_filled.csv')
-
 df['RealDateCapture'] = pd.to_datetime(df['RealDateCapture'], format='%Y-%m-%d')
 
-# df.sort_values(by='RealDateCapture', ascending=True)
-
-# Criar uma lista de todas as impressoras possíveis no conjunto de dados
 impressoras_possiveis = sorted(list(df['SerialNumber'].unique()))
 
-# Inicializar o aplicativo Dash
 app = dash.Dash(__name__)
 
-# Layout do aplicativo
 app.layout = html.Div([
-    # Dropdown para seleção da impressora
     dcc.Dropdown(
         id='dropdown-impressora',
         options=[{'label': impressora, 'value': impressora} for impressora in impressoras_possiveis],
-        value=impressoras_possiveis[0] if impressoras_possiveis else None  # Valor padrão é a primeira impressora, se houver
+        value=impressoras_possiveis[0] if impressoras_possiveis else None
     ),
-    # Gráfico de linha para exibir os dados da impressora selecionada
     dcc.Graph(id='grafico-impressora')
 ])
 
-# Callback para atualizar o gráfico com base na impressora selecionada
 @app.callback(
     Output('grafico-impressora', 'figure'),
     [Input('dropdown-impressora', 'value')]
 )
 def atualizar_grafico(serial_number_desejado):
-    # Filtrar o DataFrame para incluir apenas registros com o SerialNumber desejado
     df_filtrado = df[df['SerialNumber'] == serial_number_desejado]
 
-    # Verificar se existem registros para o SerialNumber fornecido
     if df_filtrado.empty:
         print("Não há registros para o SerialNumber fornecido.")
         return {}
     df_filtrado['total'] = df_filtrado['ReferenceMono'] +  df_filtrado['ReferenceColor'] 
 
-    # Criar um gráfico de linha usando plotly
     fig = go.Figure()
     fig.add_trace(go.Scatter(
         x=df_filtrado['RealDateCapture'], 
@@ -58,7 +60,6 @@ def atualizar_grafico(serial_number_desejado):
                    for referencecolor, referencemono, datetimeread in zip(df_filtrado['ReferenceColor'], df_filtrado['ReferenceMono'], df_filtrado['RealDateCapture'])]
     ))
 
-    # Configurar layout do gráfico
     fig.update_layout(
         title=f'Impressora: {serial_number_desejado}: ',
         xaxis_title='Data',
@@ -67,6 +68,5 @@ def atualizar_grafico(serial_number_desejado):
 
     return fig
 
-# Executar o aplicativo Dash
 if __name__ == '__main__':
     app.run_server(debug=True)

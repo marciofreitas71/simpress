@@ -1,3 +1,11 @@
+"""
+Este módulo define classes que representam os modelos de dados do banco de dados.
+
+Classes:
+- ContagemImpressoras: Representa uma contagem de impressoras.
+- Impressoras: Representa uma impressora.
+"""
+
 class ContagemImpressoras:
     """
     Representa uma contagem de impressoras.
