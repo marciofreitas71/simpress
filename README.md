@@ -118,6 +118,16 @@ Este script realiza diversas operações de manipulação de dados, como salvar 
 - **preenche_dados_csv**: Preenche os dados de um arquivo CSV com informações de impressoras e datas.
 - **df_impressoras**: Lê os dados de impressoras de um arquivo CSV específico.
 
+**exclue_dados.py**
+
+Este script exclue todos os arquivos temporários da pasta temp.
+
+Execute o script:
+
+```
+python scripts/exclue_dados.py
+```
+
 ### Visualização de Dados
 
 **analise_graficos.py**
