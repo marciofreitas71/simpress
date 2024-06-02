@@ -43,7 +43,7 @@ def insere_dados_csv_to_bd():
 
     contagem = 0
 
-    with open('D:/projetos/simpress/testes/df_filled_2024.csv', mode='r', encoding='utf-8') as csvfile, \
+    with open('temp/dados_compilados/df_filled_final.csv', mode='r', encoding='utf-8') as csvfile, \
          open('erros_log.csv', mode='w', newline='', encoding='utf-8') as errorfile:
         
         reader = pd.read_csv(csvfile, iterator=True, chunksize=1)
@@ -78,7 +78,7 @@ def insere_dados_csv_to_bd():
 
 
 def atualiza_lista_impressoras(csv_path):
-    df = pd.read_csv('testes/data/df_impressoras.csv')
+    df = pd.read_csv('temp/dados_compilados/df_impressoras.csv')
     for index, row in df.iterrows():
         PRINTERDEVICEID = row['PrinterDeviceID']
         PRINTERBRANDNAME = row['BrandName']
@@ -90,4 +90,4 @@ def atualiza_lista_impressoras(csv_path):
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     insere_dados_csv_to_bd()
-    atualiza_lista_impressoras('testes/data/df_impressoras.csv')
+    atualiza_lista_impressoras('temp/dados_compilados/df_impressoras.csv')

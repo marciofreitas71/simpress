@@ -1,11 +1,22 @@
-from datetime import datetime
+"""
+Este módulo configura caminhos e estabelece a conexão com o banco de dados Oracle.
+
+Pacotes importados:
+- dotenv: Para carregar variáveis de ambiente de um arquivo .env.
+- os: Para interações com o sistema operacional.
+- oracledb: Para conexões com o banco de dados Oracle.
+
+Funções:
+- get_connection(): Estabelece uma conexão com o banco de dados Oracle.
+"""
+
 from dotenv import load_dotenv
 import os
+import oracledb
 
 load_dotenv()
 
-# Caminhos para diferentes diretórios
-APP_DIR = os.path.dirname(__file__)
+APP_DIR = os.path.dirname(os.path.abspath(__file__))
 
 CONFIG_DIR = os.path.join(APP_DIR, 'config')
 CRUD_DIR = os.path.join(APP_DIR, 'crud')
@@ -13,24 +24,17 @@ DATABASE_DIR = os.path.join(APP_DIR, 'database')
 MODELS_DIR = os.path.join(APP_DIR, 'models')
 QUERIES_DIR = os.path.join(APP_DIR, 'queries')
 WEBSERVICE_DIR = os.path.join(APP_DIR, 'webservice')
-CREDENCIAIS_DIR = os.path.join(APP_DIR, 'webservice')
+CREDENCIAIS_DIR = os.path.join(APP_DIR, 'credenciais')
 
 def get_connection():
     """
     Estabelece uma conexão com o banco de dados Oracle.
-
-    Retorna uma conexão ativa com o banco de dados Oracle, utilizando as credenciais e
-    informações de conexão fornecidas no arquivo de ambiente (.env) através das variáveis
-    de ambiente 'user_name', 'password', 'host', 'port' e 'service_name'.
 
     Raises:
         ValueError: Se algum valor necessário está ausente no arquivo de ambiente.
 
     Returns:
         Connection: Uma conexão ativa com o banco de dados Oracle.
-
-    Exemplo:
-    >>> connection = get_connection()
     """
     user_name = os.getenv('user_name')
     password = os.getenv('password')
@@ -41,10 +45,8 @@ def get_connection():
     if None in [user_name, password, host, port, service_name]:
         raise ValueError("Erro: Algum valor necessário está ausente.")
 
-    connection = oracledb.connect(user=user_name, password=password, host=host, port=port, service_name=service_name)
+    connection = oracledb.connect(user=user_name, password=password, dsn=f"{host}:{port}/{service_name}")
     return connection
-
-
 
 wsdl_url = 'https://api-counters.nddprint.com/CountersWS/CountersData.asmx?WSDL'
 service_method = 'GetReferenceCountersData' #'GetPlainCountersData'

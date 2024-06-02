@@ -1,4 +1,5 @@
 # ignore todos os arquivos das pastas:
+.ipynb_checkpoints/
 venv/
 __pycache__/
 .env

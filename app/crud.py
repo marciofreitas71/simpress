@@ -1,5 +1,23 @@
-from app import database
+"""
+Este módulo define operações CRUD (Create, Read, Update, Delete) para manipulação dos dados no banco de dados.
+
+Pacotes importados:
+- datetime: Para manipulação de datas e horas.
+- app.config: Para configuração e conexão com o banco de dados.
+
+Funções:
+- create_impressora(): Cria uma nova impressora no banco de dados.
+- create_contagem_impressoras(): Registra uma contagem de impressoras no banco de dados.
+- read_contagem_impressoras(): Lê os registros de contagem de impressoras do banco de dados.
+- update_contagem_impressora(): Atualiza os registros de contagem de impressoras no banco de dados.
+- delete_contagem_impressora(): Exclui os registros de contagem de impressoras do banco de dados.
+- delete_all_registros(): Exclui todos os registros de contagem de impressoras do banco de dados.
+- delete_all_impressoras(): Exclui todas as impressoras do banco de dados.
+- read_impressoras_data(): Lê os registros de contagem de impressoras do banco de dados para uma determinada data.
+"""
+
 from datetime import datetime
+from app import config
 
 def create_impressora(PRINTERDEVICEID, PRINTERBRANDNAME, PRINTERMODELNAME, SERIALNUMBER):
     """
@@ -14,23 +32,20 @@ def create_impressora(PRINTERDEVICEID, PRINTERBRANDNAME, PRINTERMODELNAME, SERIA
     Returns:
         bool: True se a impressora foi criada com sucesso, False se a impressora já existe.
     """
-    connection = database.get_connection()
+    connection = config.get_connection()
     cursor = connection.cursor()
     
-    # Verificar se a impressora já existe no banco de dados
     select_query = "SELECT COUNT(*) FROM impressora WHERE PRINTERDEVICEID = :printerdeviceid"
     cursor.execute(select_query, {'printerdeviceid': PRINTERDEVICEID})
     count = cursor.fetchone()[0]
     
     if count > 0:
-        # Impressora já existe no banco de dados
         print("Impressora já existe no banco de dados.")
         return False
 
     created_at = datetime.now()
     status = 1
     
-    # Inserir nova impressora no banco de dados
     insert_query = """
     INSERT INTO impressora (PRINTERDEVICEID, PRINTERBRANDNAME, PRINTERMODELNAME, SERIALNUMBER, CREATED_AT, STATUS)
     VALUES(:printerdeviceid, :printerbrandname, :printermodelname, :serialnumber, :created_at, :status)
@@ -45,7 +60,6 @@ def create_impressora(PRINTERDEVICEID, PRINTERBRANDNAME, PRINTERMODELNAME, SERIA
         'status': status
     })
 
-    # Commit e fechamento da conexão
     connection.commit()
     cursor.close()
     connection.close()
@@ -61,13 +75,12 @@ def create_contagem_impressoras(impressora_id, contador_pb, contador_cor, data_l
         contador_cor (int): Contador de páginas coloridas.
         data_leitura (datetime): Data da leitura do contador.
     """
-    connection = database.get_connection()
+    connection = config.get_connection()
     cursor = connection.cursor()
     
     contador_total = contador_pb + contador_cor
     created_at = datetime.now()
     
-    # Verifica se já existe um registro com os mesmos valores de IMPRESSORA_ID e DATA_LEITURA
     select_query = """
     SELECT COUNT(*)
     FROM contagem_impressora
@@ -77,7 +90,7 @@ def create_contagem_impressoras(impressora_id, contador_pb, contador_cor, data_l
     cursor.execute(select_query, {'impressora_id': impressora_id, 'data_leitura': data_leitura})
     count = cursor.fetchone()[0]
     
-    if count == 0:  # Se não houver registros, insere um novo
+    if count == 0:
         insert_query = """
         INSERT INTO contagem_impressora (IMPRESSORA_ID, CONTADOR_PB, CONTADOR_COR, CONTADOR_TOTAL, DATA_LEITURA, CREATED_AT)
         VALUES (:impressora_id, :contador_pb, :contador_cor, :contador_total, :data_leitura, :created_at)
@@ -90,7 +103,6 @@ def create_contagem_impressoras(impressora_id, contador_pb, contador_cor, data_l
             'data_leitura': data_leitura,
             'created_at': created_at
         })
-        # Commit e fechamento da conexão
         connection.commit()
     
     cursor.close()
@@ -106,7 +118,7 @@ def read_contagem_impressoras(impressora_id):
     Returns:
         tuple: Registro de contagem da impressora.
     """
-    connection = database.get_connection()
+    connection = config.get_connection()
     cursor = connection.cursor()
 
     select_query = "SELECT * FROM contagem_impressora WHERE IMPRESSORA_ID = :impressora_id"
@@ -129,7 +141,7 @@ def update_contagem_impressora(impressora_id, contador_pb=None, contador_cor=Non
         contador_total (int, optional): Novo contador total de páginas.
         data_leitura (datetime, optional): Nova data de leitura do contador.
     """
-    connection = database.get_connection()
+    connection = config.get_connection()
     cursor = connection.cursor()
 
     update_query = """
@@ -148,7 +160,6 @@ def update_contagem_impressora(impressora_id, contador_pb=None, contador_cor=Non
         'data_leitura': data_leitura
     })
 
-    # Commit e fechamento da conexão
     connection.commit()
     cursor.close()
     connection.close()
@@ -160,13 +171,12 @@ def delete_contagem_impressora(impressora_id):
     Args:
         impressora_id (int): ID da impressora.
     """
-    connection = database.get_connection()
+    connection = config.get_connection()
     cursor = connection.cursor()
 
     delete_query = "DELETE FROM contagem_impressoras WHERE IMPRESSORA_ID = :impressora_id"
     cursor.execute(delete_query, {'impressora_id': impressora_id})
 
-    # Commit e fechamento da conexão
     connection.commit()
     cursor.close()
     connection.close()
@@ -175,13 +185,12 @@ def delete_all_registros():
     """
     Exclui todos os registros de contagem de impressoras do banco de dados.
     """
-    connection = database.get_connection()
+    connection = config.get_connection()
     cursor = connection.cursor()
 
     delete_query = "DELETE FROM contagem_impressora"
     cursor.execute(delete_query)
 
-    # Commit e fechamento da conexão
     connection.commit()
     cursor.close()
     connection.close()
@@ -190,13 +199,12 @@ def delete_all_impressoras():
     """
     Exclui todas as impressoras do banco de dados.
     """
-    connection = database.get_connection()
+    connection = config.get_connection()
     cursor = connection.cursor()
 
     delete_query = "DELETE FROM impressora"
     cursor.execute(delete_query)
 
-    # Commit e fechamento da conexão
     connection.commit()
     cursor.close()
     connection.close()
@@ -211,7 +219,7 @@ def read_impressoras_data(data):
     Returns:
         list: Lista de registros de contagem de impressoras para a data especificada.
     """
-    connection = database.get_connection()
+    connection = config.get_connection()
     cursor = connection.cursor()
 
     select_query = "SELECT * FROM contagem_impressora WHERE DATA_LEITURA = :data"
