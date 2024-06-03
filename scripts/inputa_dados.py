@@ -76,16 +76,28 @@ def insere_dados_csv_to_bd():
                 print(f'Inserido o registro {contagem}')
                 os.system('cls')
 
-
 def atualiza_lista_impressoras(csv_path):
-    df = pd.read_csv('temp/dados_compilados/df_impressoras.csv')
+    """
+    Atualiza a lista de impressoras no banco de dados a partir de um arquivo CSV.
+
+    Lê um arquivo CSV contendo dados de impressoras e insere esses registros no banco de dados.
+    
+    Args:
+        csv_path (str): O caminho para o arquivo CSV contendo os dados das impressoras.
+    
+    O arquivo CSV esperado deve conter as colunas:
+    - 'PrinterDeviceID': ID da impressora
+    - 'BrandName': Nome da marca da impressora
+    - 'PrinterModelName': Nome do modelo da impressora
+    - 'SerialNumber': Número de série da impressora
+    """
+    df = pd.read_csv(csv_path)
     for index, row in df.iterrows():
         PRINTERDEVICEID = row['PrinterDeviceID']
         PRINTERBRANDNAME = row['BrandName']
         PRINTERMODELNAME = row['PrinterModelName']
         SERIALNUMBER = row['SerialNumber']
         crud.create_impressora(PRINTERDEVICEID, PRINTERBRANDNAME, PRINTERMODELNAME, SERIALNUMBER)
-
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
