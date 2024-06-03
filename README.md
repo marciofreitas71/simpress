@@ -133,15 +133,15 @@ utilizando as bibliotecas SQLAlchemy, dotenv, pandas e zeep. Ele inclui a config
 do cliente SOAP e o processamento de dados recebidos do serviço.
 
 Pacotes importados:
-    os: Para interações com o sistema operacional.
-    StringIO: Para manipulação de strings como arquivos.
-    load_dotenv (dotenv): Para carregar variáveis de ambiente de um arquivo .env.
-    datetime, timedelta (datetime): Para manipulação de datas e horários.
-    pandas as pd: Para manipulação e análise de dados.
-    webservice (app): Para funcionalidades adicionais do aplicativo.
-    config (app): Para configuração do aplicativo.
-    logging: Para registro de eventos e mensagens.
-    zeep: Para interações com serviços da web SOAP.
+- os: Para interações com o sistema operacional.
+- StringIO: Para manipulação de strings como arquivos.
+- load_dotenv (dotenv): Para carregar variáveis de ambiente de um arquivo .env.
+- datetime, timedelta (datetime): Para manipulação de datas e horários.
+- pandas as pd: Para manipulação e análise de dados.
+- webservice (app): Para funcionalidades adicionais do aplicativo.
+- config (app): Para configuração do aplicativo.
+- logging: Para registro de eventos e mensagens.
+- zeep: Para interações com serviços da web SOAP.
 
 Funções:
 - recuperar_dados(data): Recupera dados de um serviço da web SOAP.
