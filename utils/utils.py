@@ -74,17 +74,35 @@ def insere_websersvice_banco(data):
 
 
 
-def df_impressoras():
+def verifica_impressoras():
     """
-    Lê os dados de impressoras de um arquivo CSV específico.
-
-    Returns:
-        pd.DataFrame: DataFrame contendo os dados das impressoras.
+    Lê os dados de impressoras do banco de dados relativos ao último dia inserido e
+    retorna um DataFrame com esses dados.
+    lê os dados recuperados do webservice relativos ao dia atual e retorna um DataFrame com esses dados.
+    compara os dois DataFrames e retorna um DataFrame contendo as diferenças entre eles.
+    Verifica se as impressoras do dataframe de diferenças estão presentes no dataframe de impressoras.
+    caso não estejam, insere as impressoras no banco de dados.
     """
-    file = 'data/Impressoras Outsourcing - HP.csv'
-    df = pd.read_csv(file)
-    return df
+    data = datetime.now().strftime('%d-%m-%Y')
+    data_bd = datetime.strptime(data, '%d-%m-%Y') - timedelta(days=1)
+    data_bd_str = data_bd.strftime('%d-%m-%Y')
 
+    registros_bd = crud.read_impressoras_data(data_bd_str)
+    colunas = ['IMPRESSORA_ID', 'CONTADOR_PB', 'CONTADOR_COR', 'CONTADOR_TOTAL', 'DATA_LEITURA', 'CREATED_AT']
+    df_database = pd.DataFrame(registros_bd, columns=colunas)
+
+    df_webservice = webservice.recuperar_dados(data)
+    df_webservice['DateTimeRead'] = pd.to_datetime(df_webservice['DateTimeRead'])
+
+    df_diff = pd.concat([df_webservice, df_database]).drop_duplicates(subset=['IMPRESSORA_ID', 'DateTimeRead'], keep=False)
+
+    impressoras = crud.read_impressoras()
+
+    for index, row in df_diff.iterrows():
+        if row['IMPRESSORA_ID'] not in impressoras:
+            crud.create_impressora(row['IMPRESSORA_ID'])
+            print(f"Impressora {row['IMPRESSORA_ID']} inserida com sucesso.")
+    
 def verifica_impressoras_dataset():
     """
     Verifica e imprime o número de impressoras únicas no dataset compilado.
