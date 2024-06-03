@@ -59,7 +59,30 @@ instalar_dependencias() {
     fi
 }
 
+# Função para configurar o PYTHONPATH
+configurar_pythonpath() {
+    read -p "Informe o caminho padrão do projeto: " PROJECT_PATH
+
+    # Identifica o sistema operacional
+    OS="$(uname -s)"
+
+    case "$OS" in
+        Linux*|Darwin*)    
+            export PYTHONPATH="$PROJECT_PATH:$PYTHONPATH"
+            echo "PYTHONPATH configurado para $PYTHONPATH"
+            ;;
+        CYGWIN*|MINGW32*|MSYS*|MINGW*)
+            export PYTHONPATH="$PROJECT_PATH;$PYTHONPATH"
+            echo "PYTHONPATH configurado para $PYTHONPATH"
+            ;;
+        *)
+            echo "Sistema operacional desconhecido, não foi possível configurar o PYTHONPATH"
+            ;;
+    esac
+}
+
 # Execução das funções
 criar_diretorios
 criar_venv
+configurar_pythonpath
 instalar_dependencias
