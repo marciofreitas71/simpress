@@ -22,13 +22,17 @@ from datetime import datetime
 from dash import dcc, html
 from dash.dependencies import Input, Output
 
+# Carrega os dados do arquivo CSV
 df = pd.read_csv('../temp/dados_compilados/df_filled.csv')
 df['RealDateCapture'] = pd.to_datetime(df['RealDateCapture'], format='%Y-%m-%d')
 
+# Obtém a lista de números de série únicos das impressoras
 impressoras_possiveis = sorted(list(df['SerialNumber'].unique()))
 
+# Inicializa o aplicativo Dash
 app = dash.Dash(__name__)
 
+# Define o layout do aplicativo
 app.layout = html.Div([
     dcc.Dropdown(
         id='dropdown-impressora',
@@ -43,13 +47,26 @@ app.layout = html.Div([
     [Input('dropdown-impressora', 'value')]
 )
 def atualizar_grafico(serial_number_desejado):
+    """
+    Atualiza o gráfico com base na impressora selecionada.
+
+    Args:
+        serial_number_desejado (str): O número de série da impressora selecionada.
+
+    Returns:
+        go.Figure: Um objeto Figure do Plotly contendo o gráfico atualizado.
+    """
+    # Filtra os dados com base no número de série selecionado
     df_filtrado = df[df['SerialNumber'] == serial_number_desejado]
 
     if df_filtrado.empty:
         print("Não há registros para o SerialNumber fornecido.")
         return {}
-    df_filtrado['total'] = df_filtrado['ReferenceMono'] +  df_filtrado['ReferenceColor'] 
+    
+    # Calcula o total de impressões (preto e branco + coloridas)
+    df_filtrado['total'] = df_filtrado['ReferenceMono'] + df_filtrado['ReferenceColor']
 
+    # Cria um gráfico de linha para as impressões
     fig = go.Figure()
     fig.add_trace(go.Scatter(
         x=df_filtrado['RealDateCapture'], 
@@ -60,6 +77,7 @@ def atualizar_grafico(serial_number_desejado):
                    for referencecolor, referencemono, datetimeread in zip(df_filtrado['ReferenceColor'], df_filtrado['ReferenceMono'], df_filtrado['RealDateCapture'])]
     ))
 
+    # Atualiza o layout do gráfico
     fig.update_layout(
         title=f'Impressora: {serial_number_desejado}: ',
         xaxis_title='Data',
