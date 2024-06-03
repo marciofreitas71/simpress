@@ -41,6 +41,8 @@ def create_impressora(PRINTERDEVICEID, PRINTERBRANDNAME, PRINTERMODELNAME, SERIA
     
     if count > 0:
         print("Impressora já existe no banco de dados.")
+        cursor.close()
+        connection.close()
         return False
 
     created_at = datetime.now()
@@ -174,7 +176,7 @@ def delete_contagem_impressora(impressora_id):
     connection = config.get_connection()
     cursor = connection.cursor()
 
-    delete_query = "DELETE FROM contagem_impressoras WHERE IMPRESSORA_ID = :impressora_id"
+    delete_query = "DELETE FROM contagem_impressora WHERE IMPRESSORA_ID = :impressora_id"
     cursor.execute(delete_query, {'impressora_id': impressora_id})
 
     connection.commit()
