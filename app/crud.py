@@ -1,9 +1,19 @@
+from datetime import datetime
+import pandas as pd
+from app import config
+import sys
+import os
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from app import webservice
+import datetime
+
 """
 Este módulo define operações CRUD (Create, Read, Update, Delete) para manipulação dos dados no banco de dados.
 
 Pacotes importados:
 - datetime: Para manipulação de datas e horas.
-- app.config: Para configuração e conexão com o banco de dados.
+- config: Para configuração e conexão com o banco de dados.
 
 Funções:
 - create_impressora(): Cria uma nova impressora no banco de dados.
@@ -14,10 +24,8 @@ Funções:
 - delete_all_registros(): Exclui todos os registros de contagem de impressoras do banco de dados.
 - delete_all_impressoras(): Exclui todas as impressoras do banco de dados.
 - read_impressoras_data(): Lê os registros de contagem de impressoras do banco de dados para uma determinada data.
+- read_all_records(): Lê todos os registros da tabela contagem_impressora do banco de dados.
 """
-
-from datetime import datetime
-from app import config
 
 def create_impressora(PRINTERDEVICEID, PRINTERBRANDNAME, PRINTERMODELNAME, SERIALNUMBER):
     """
@@ -211,6 +219,7 @@ def delete_all_impressoras():
     cursor.close()
     connection.close()
 
+
 def read_impressoras_data(data):
     """
     Lê os registros de contagem de impressoras do banco de dados para uma determinada data.
@@ -221,10 +230,13 @@ def read_impressoras_data(data):
     Returns:
         list: Lista de registros de contagem de impressoras para a data especificada.
     """
+    # Transforma a data do formato 'dd-mm-YYYY' para 'YYYY-mm-dd'
+    data = datetime.datetime.strptime(data, '%d-%m-%Y').strftime('%Y-%m-%d')
+    
     connection = config.get_connection()
     cursor = connection.cursor()
 
-    select_query = "SELECT * FROM contagem_impressora WHERE DATA_LEITURA = :data"
+    select_query = "SELECT * FROM contagem_impressora WHERE TO_CHAR(DATA_LEITURA, 'YYYY-MM-DD') = :data"
     cursor.execute(select_query, {'data': data})
     results = cursor.fetchall()
 
@@ -232,3 +244,108 @@ def read_impressoras_data(data):
     connection.close()
 
     return results
+
+
+
+def read_all_record_data():
+    
+    """
+    Lê todos os registros da tabela contagem_impressora do banco de dados filtrados por "RealDateCapture".
+
+    Returns:
+        list: Lista de todos os registros de contagem de impressoras filtrados por "RealDateCapture".
+    """
+    connection = config.get_connection()
+    cursor = connection.cursor()
+
+    select_query = """
+    SELECT * 
+    FROM contagem_impressora
+    WHERE DATA_LEITURA = (SELECT MAX(REALDATACAPTURE) FROM contagem_impressora)
+    """
+    cursor.execute(select_query)
+    results = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+
+    return results
+
+def read_all_impressoras():
+    """
+    Lê todos os registros da tabela impressora do banco de dados.
+
+    Returns:
+        list: Lista de todos os registros de impressoras.
+    """
+    connection = config.get_connection()
+    cursor = connection.cursor()
+
+    select_query = "SELECT * FROM contagem_impressora"
+    cursor.execute(select_query)
+    results = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+
+    return results
+
+
+def obter_registros_ultima_data():
+    """
+    Recupera todos os registros referentes à maior data_leitura no banco de dados.
+
+    Returns:
+        list: Lista de registros com a maior data_leitura.
+    """
+    # Primeiro, obtenha a maior data_leitura
+    connection = config.get_connection()
+    cursor = connection.cursor()
+
+    query_max_date = "SELECT MAX(DATA_LEITURA) FROM contagem_impressora"
+    cursor.execute(query_max_date)
+    ultima_data = cursor.fetchone()[0]
+
+    if ultima_data is None:
+        cursor.close()
+        connection.close()
+        return []
+
+    # Formate a data como string para uso na consulta
+    ultima_data_str = ultima_data.strftime('%Y-%m-%d %H:%M:%S')
+
+    # Em seguida, obtenha todos os registros com essa data_leitura
+    query_records = f"SELECT * FROM contagem_impressora WHERE DATA_LEITURA = TO_DATE('{ultima_data_str}', 'YYYY-MM-DD HH24:MI:SS')"
+    cursor.execute(query_records)
+    results = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+
+    return results
+
+def obter_ultima_data_bd():
+    """
+    Recupera a maior data_leitura no banco de dados.
+
+    Returns:
+        datetime: A maior data_leitura no banco de dados.
+    """
+    connection = config.get_connection()
+    cursor = connection.cursor()
+
+    query_max_date = "SELECT MAX(DATA_LEITURA) FROM contagem_impressora"
+    cursor.execute(query_max_date)
+    ultima_data = cursor.fetchone()[0]
+
+    cursor.close()
+    connection.close()
+
+    return ultima_data
+
+if __name__ == '__main__':
+    pass
+    print(obter_ultima_data_bd())
+    # print(read_all_record_data())
+    # print(obter_registros_ultima_data())
+    

@@ -1,0 +1,15 @@
+2024-06-04 11:36:54,472 - INFO - Scheduler iniciado
+2024-06-04 11:36:54,529 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2024-06-04 11:36:54,529 - INFO - Scheduler em execução
+2024-06-04 11:36:54,529 - INFO - Added job "insere_websersvice_bd" to job store "default"
+2024-06-04 11:36:54,529 - INFO - Scheduler started
+2024-06-04 16:54:31,754 - INFO - Scheduler iniciado
+2024-06-04 16:54:31,801 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2024-06-04 16:54:31,801 - INFO - Scheduler em execução
+2024-06-04 16:54:31,801 - INFO - Added job "insere_websersvice_bd" to job store "default"
+2024-06-04 16:54:31,802 - INFO - Scheduler started
+2024-06-04 16:56:25,850 - INFO - Scheduler iniciado
+2024-06-04 16:56:25,870 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2024-06-04 16:56:25,870 - INFO - Scheduler em execução
+2024-06-04 16:56:25,871 - INFO - Added job "insere_websersvice_bd" to job store "default"
+2024-06-04 16:56:25,871 - INFO - Scheduler started

@@ -21,10 +21,13 @@ from datetime import datetime, timedelta
 from tqdm import tqdm
 import pandas as pd
 import numpy as np
+from dotenv import load_dotenv
 import logging
 import sys
 import os
 import re
+
+load_dotenv()
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from app import webservice
@@ -44,8 +47,8 @@ def salva_dados_csv(DateTimeStart, DateTimeEnd):
     while data != DateTimeStart:
         dados_webservice = webservice.recuperar_dados(data)
         dados_webservice['RealDateCapture'] = data
-        if not os.path.isfile(f'temp/dados_diarios/dados-{data}.csv'):
-            dados_webservice.to_csv(f'temp/dados_diarios/dados-{data}.csv', index=False)
+        if not os.path.isfile(f'../temp/dados_diarios/dados-{data}.csv'):
+            dados_webservice.to_csv(f'../temp/dados_diarios/dados-{data}.csv', index=False)
             print(f'Dados do dia {data} processados e salvos')
         else:
             print(f'O arquivo referente ao dia {data} já foi gerado')
@@ -63,7 +66,6 @@ def gera_arquivo_csv_compilado(pasta):
     Esta função lê todos os arquivos CSV na pasta especificada, concatena seus dados em um único DataFrame,
     e salva o DataFrame resultante em um novo arquivo CSV com a data atual no nome.
     """
-    data = datetime.now().strftime('%d-%m-%Y')
     dataframes = []
     contagem = 0
     for arquivo in os.listdir(pasta):
@@ -75,7 +77,7 @@ def gera_arquivo_csv_compilado(pasta):
         contagem += 1
     print(f'Foram adicionados {contagem} arquivos.')
     df_final = pd.concat(dataframes, ignore_index=True)
-    df_final.to_csv(f'temp/dados_compilados/arquivo_final.csv', index=False)
+    df_final.to_csv(f'../temp/dados_compilados/arquivo_final.csv', index=False)
 
 def preenche_dados_csv(caminho_csv, data_inicial, data_final, data_inicial_bi):
     """
@@ -102,23 +104,23 @@ def preenche_dados_csv(caminho_csv, data_inicial, data_final, data_inicial_bi):
     df = df.sort_values(by=['RealDateCapture','SerialNumber'], ascending=[False,True])
     print(f"Conjunto de dados carregado com {len(df)} registros.")
     df['RealDateCapture'] = pd.to_datetime(df['RealDateCapture'], format='%d-%m-%Y')
-    df.to_csv('temp/dados_compilados/df_original.csv')
+    df.to_csv('../temp/dados_compilados/df_original.csv')
     print("Dados originais salvos.")
     imp = df.drop_duplicates(subset='SerialNumber')
     imp = imp[['EnterpriseName', 'PrinterDeviceID', 'BrandName', 'PrinterModelName', 'SerialNumber']]
-    imp.to_csv('temp/dados_compilados/df_impressoras.csv')
+    imp.to_csv('../temp/dados_compilados/df_impressoras.csv')
     print("Dados das impressoras únicos salvos.")
     date_range = pd.date_range(start=data_inicial, end=data_final, freq='D')
     df_dates = pd.DataFrame({'RealDateCapture': date_range})
     imp['key'] = 1
     df_dates['key'] = 1
     df_full_datas = pd.merge(imp, df_dates, on='key').drop('key', axis=1)
-    df_full_datas.to_csv("temp/dados_compilados/df_full_datas.csv")
+    df_full_datas.to_csv("../temp/dados_compilados/df_full_datas.csv")
     print("Datas combinadas salvas.")
     df_merged = df_full_datas.merge(df, how='left', on=['RealDateCapture','SerialNumber','EnterpriseName','PrinterDeviceID','BrandName','PrinterModelName'])
     df_merged.fillna(value=np.nan, inplace=True)
     df_merged = df_merged.sort_values(by=['RealDateCapture','SerialNumber'], ascending=False)
-    df_merged.to_csv('temp/dados_compilados/df_merged.csv')
+    df_merged.to_csv('../temp/dados_compilados/df_merged.csv')
     print("Dados mesclados salvos.")
     registros_impressoras = []
     for index, row in imp.iterrows():
@@ -130,7 +132,7 @@ def preenche_dados_csv(caminho_csv, data_inicial, data_final, data_inicial_bi):
     df_filled['RealDateCapture'] = pd.to_datetime(df_filled['RealDateCapture'])
     df_filled_final = df_filled[df_filled['RealDateCapture'] > data_inicial_bi]
     df_filled_final = df_filled_final.fillna(0)
-    df_filled_final.to_csv('temp/dados_compilados/df_filled_final.csv', index=False)
+    df_filled_final.to_csv('../temp/dados_compilados/df_filled_final.csv', index=False)
     print("Dados finais salvos.")
 
 def df_impressoras():
@@ -150,6 +152,6 @@ if __name__ == "__main__":
     data_final = '31-05-2024'
     data_inicial_bi = '01-01-2024'
     
-    salva_dados_csv(data_inicial, data_final)
-    gera_arquivo_csv_compilado('temp/dados_diarios/')
-    preenche_dados_csv('temp/dados_compilados/arquivo_final.csv', data_inicial, data_final, data_inicial_bi)
+    # salva_dados_csv(data_inicial, data_final)
+    gera_arquivo_csv_compilado('../temp/dados_diarios/')
+    preenche_dados_csv('../temp/dados_compilados/arquivo_final.csv', data_inicial, data_final, data_inicial_bi)

@@ -69,7 +69,7 @@ def recuperar_dados(data):
 
         # Processa a resposta do serviço e converte para DataFrame
         df = pd.read_json(StringIO(response))
-        return df
+        return df[df['BrandName'] == 'HP']
     except zeep.exceptions.Fault as e:
         logging.error(f"Erro durante a execução do serviço: {str(e)}")
         raise

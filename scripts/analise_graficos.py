@@ -22,8 +22,9 @@ from datetime import datetime
 from dash import dcc, html
 from dash.dependencies import Input, Output
 
-# Carrega os dados do arquivo CSV
-df = pd.read_csv('../temp/dados_compilados/df_filled.csv')
+# Carrega os dados do arquivo CSV df_filled_final.csv
+df = pd.read_csv('temp/dados_compilados/df_filled_final.csv')
+
 df['RealDateCapture'] = pd.to_datetime(df['RealDateCapture'], format='%Y-%m-%d')
 
 # Obtém a lista de números de série únicos das impressoras

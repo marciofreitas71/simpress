@@ -1,3 +1,9 @@
+import sys
+import os
+
+# Adiciona o caminho do projeto ao PYTHONPATH
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 """
 Este módulo define classes que representam os modelos de dados do banco de dados.
 

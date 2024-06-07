@@ -1,3 +1,10 @@
+import sys
+import os
+
+# Adiciona o caminho do projeto ao PYTHONPATH
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+
 """
 Este módulo contém consultas SQL para operações CRUD no banco de dados.
 
@@ -70,3 +77,11 @@ WHERE PRINTERDEVICEID = :printer_device_id
 DELETE_IMPRESSORA = """
 DELETE FROM impressoras WHERE PRINTERDEVICEID = :printer_device_id
 """
+
+# Consulta para recuperar a última data de leitura no banco de dados.
+# Retorna:
+# - A data e hora do último registro no banco de dados.
+SELECT_LAST_READING_DATE = """
+SELECT MAX(DATA_LEITURA) FROM contagem_impressoras
+"""
+

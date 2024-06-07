@@ -4,19 +4,31 @@ import os
 # Adiciona o caminho do projeto ao PYTHONPATH
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from app import config, webservice, crud
+from app import webservice, crud, config
 import logging
 from tqdm import tqdm
 from datetime import datetime, timedelta
-from datetime import datetime, timedelta
 import pandas as pd
 import itertools
-import pandas as pd
 import numpy as np
 import socket
 import glob
 import csv
 
+
+def obter_dados_webservice(data):
+        """
+        Recupera os dados do webservice para uma data específica.
+
+        Args:
+            data (str): Data dos dados a serem recuperados no formato 'dd-mm-YYYY'.
+
+        Returns:
+            pd.DataFrame: DataFrame contendo os dados do webservice.
+        """
+        dados_webservice = webservice.recuperar_dados(data)
+        dados_webservice['DateTimeRead'] = pd.to_datetime(dados_webservice['DateTimeRead'])
+        return dados_webservice
 
 def obter_hostname_por_ip(ip):
     """
@@ -41,11 +53,11 @@ def obter_hostname_por_ip(ip):
     except socket.gaierror:
         return "Endereço IP inválido"
 
-def insere_websersvice_banco():
+def insere_webservice_banco():
     """
-    Variação da função 'insere_websersvice_banco' que lida com a inserção de dados do webservice no banco de dados. 
-    Nesta variação, deve-se considerar que a aplicação pode ter ficado alguns dias sem rodar, e portanto, é necessário
-    recuperar os dados de todos os dias entre a última execução e a data atual e preencher as lacunas.
+   função 'insere_websersvice_banco' que lida com a inserção de dados do webservice no banco de dados. 
+   considerar que a aplicação pode ter ficado alguns dias sem rodar, e portanto, é necessário 
+   recuperar os dados de todos os dias entre a última execução e a data atual e preencher as lacunas.
     """
 
     def obter_ultima_data_bd():
@@ -55,23 +67,8 @@ def insere_websersvice_banco():
         Returns:
             datetime: Data do último registro no banco de dados.
         """
-        query = "SELECT MAX(DATA_LEITURA) FROM CONTAGEM_IMPRESSORAS"
-        data = crud.execute_query(query)
-        return data
-
-    def obter_dados_webservice(data):
-        """
-        Recupera os dados do webservice para uma data específica.
-
-        Args:
-            data (str): Data dos dados a serem recuperados no formato 'dd-mm-YYYY'.
-
-        Returns:
-            pd.DataFrame: DataFrame contendo os dados do webservice.
-        """
-        dados_webservice = webservice.recuperar_dados(data)
-        dados_webservice['DateTimeRead'] = pd.to_datetime(dados_webservice['DateTimeRead'])
-        return dados_webservice
+        ultima_data_bd = crud.obter_ultima_data_bd()
+        return ultima_data_bd
 
     # Recupera a data do último registro no banco de dados
     ultima_data_bd = obter_ultima_data_bd()
@@ -96,92 +93,88 @@ def insere_websersvice_banco():
         # Cria um dataframe com os dados do webservice para a data especificada
         df_webservice = obter_dados_webservice(data.strftime('%d-%m-%Y'))
 
-        # Cria um dataframe pandas com os dados do último registro no banco de dados
-        registros_bd = crud.read_impressoras_data(data.strftime('%d-%m-%Y'))
-        colunas = ['IMPRESSORA_ID', 'CONTADOR_PB', 'CONTADOR_COR', 'CONTADOR_TOTAL', 'DATA_LEITURA', 'CREATED_AT']
-        df_database = pd.DataFrame(registros_bd, columns=colunas) if registros_bd else pd.DataFrame(columns=colunas)
 
-        # Concatena os dataframes do webservice e do banco de dados e identifica as diferenças
-        df_diff = pd.concat([df_webservice, df_database]).drop_duplicates(subset=['IMPRESSORA_ID', 'DateTimeRead'], keep=False)
-        df_final = pd.concat([df_webservice, df_diff])
+        # # Cria um dataframe pandas com os dados do último registro no banco de dados
+        # registros_bd = crud.read_impressoras_data(data.strftime('%d-%m-%Y'))
+        # colunas = ['IMPRESSORA_ID', 'CONTADOR_PB', 'CONTADOR_COR', 'CONTADOR_TOTAL', 'DATA_LEITURA', 'CREATED_AT']
+        # df_database = pd.DataFrame(registros_bd, columns=colunas) if registros_bd else pd.DataFrame(columns=colunas)
+        # print(df_database)
 
-        # Iteração para inserir os registros no banco de dados
-        for index, row in df_final.iterrows():
-            try:
-                crud.create_contagem_impressoras(
-                    row['IMPRESSORA_ID'],
-                    row['CONTADOR_PB'],
-                    row['CONTADOR_COR'],
-                    row['DateTimeRead']
-                )
-                print(f"Registro ({row['IMPRESSORA_ID']}) inserido com sucesso.")
-            except Exception as e:
-                print(f"Erro ao inserir registro de contagem para o registro com IMPRESSORA_ID {row['IMPRESSORA_ID']}: {e}")
+        # # Concatena os dataframes do webservice e do banco de dados e identifica as diferenças
+        # df_diff = pd.concat([df_webservice, df_database]).drop_duplicates(subset=['IMPRESSORA_ID', 'DateTimeRead'], keep=False)
+        # df_final = pd.concat([df_webservice, df_diff])
+
+        # # Iteração para inserir os registros no banco de dados
+        # for index, row in df_final.iterrows():
+        #     print(row['IMPRESSORA_ID'], row['DateTimeRead'])
+        #     # try:
+            #     crud.create_contagem_impressoras(
+            #         row['IMPRESSORA_ID'],
+            #         row['CONTADOR_PB'],
+            #         row['CONTADOR_COR'],
+            #         row['DateTimeRead']
+            #     )
+            #     print(f"Registro ({row['IMPRESSORA_ID']}) inserido com sucesso.")
+            # except Exception as e:
+            #     print(f"Erro ao inserir registro de contagem para o registro com IMPRESSORA_ID {row['IMPRESSORA_ID']}: {e}")
 
 
 def verifica_impressoras(data_atual=None):
+
     """
     Compara os dados de impressoras do banco de dados e do webservice, inserindo novas impressoras se necessário.
 
     Este método realiza as seguintes etapas:
     
-    1. Lê os dados de impressoras do banco de dados referentes ao dia anterior.
+    1. Lê os dados de impressoras do banco de dados referentes ao útimo dia registrado.
     2. Recupera os dados das impressoras do webservice relativos ao dia atual.
     3. Compara os dois DataFrames e identifica as diferenças.
     4. Verifica se as impressoras do DataFrame de diferenças estão presentes no banco de dados.
     5. Insere as impressoras que não estão presentes no banco de dados.
-
-    Parâmetros:
-    data_atual (str): Data atual no formato 'dd-mm-yyyy'. Se não fornecido, a data atual será utilizada.
-
-    Retorna:
-    None
     """
-    if data_atual is None:
-        data_atual = datetime.now().strftime('%d-%m-%Y')
-    else:
-        # Certifica-se de que a data_atual está no formato correto
-        try:
-            data_atual = datetime.strptime(data_atual, '%d-%m-%Y').strftime('%d-%m-%Y')
-        except ValueError:
-            raise ValueError("O formato da data deve ser 'dd-mm-yyyy'")
+    
+    # Define a data de fim como a data atual
+    data_fim = datetime.now().date()
+    # data_fim = datetime.now().date() if data_atual is None else datetime.strptime(data_atual, '%d-%m-%Y').date()
 
-    data_bd = datetime.strptime(data_atual, '%d-%m-%Y') - timedelta(days=1)
-    data_bd_str = data_bd.strftime('%d-%m-%Y')
-
-    registros_bd = crud.read_impressoras_data(data_bd_str)
-    colunas = ['IMPRESSORA_ID', 'CONTADOR_PB', 'CONTADOR_COR', 'CONTADOR_TOTAL', 'DATA_LEITURA', 'CREATED_AT']
-    df_database = pd.DataFrame(registros_bd, columns=colunas)
-
-    df_webservice = webservice.recuperar_dados(data_atual)
-    df_webservice['DateTimeRead'] = pd.to_datetime(df_webservice['DateTimeRead'])
-
-    df_diff = pd.concat([df_webservice, df_database]).drop_duplicates(subset=['IMPRESSORA_ID', 'DateTimeRead'], keep=False)
-
+    recuperando_impressoras = True
+    while recuperando_impressoras == True:
+        print('Recuperando impressoras do webservice...')
+        # Cria um dataframe com os dados do webservice para a data especificada
+        df_webservice = webservice.recuperar_dados(data_fim.strftime('%d-%m-%Y'))
+        recuperando_impressoras = False
+        print('Impressoras recuperadas com sucesso.')
+    print('Registros recuperados do webservice:')
+    
+    df_webservice = df_webservice[['EnterpriseName', 'PrinterDeviceID', 'BrandName', 'PrinterModelName','SerialNumber']]
+    print(df_webservice)
+    
+    # Cria um dataframe pandas com os dados referentes à última data de registro no banco de dados (RealDataCapture)
+    registros_bd = crud.obter_registros_ultima_data()
+            
+    df_registros_bd = pd.DataFrame(registros_bd, columns=['ID','IMPRESSORA_ID', 'CONTADOR_PB', 'CONTADOR_COR', 'CONTADOR_TOTAL', 'DATA_LEITURA', 'CREATED_AT'])
+    df_registros_bd = df_registros_bd.merge(df_webservice, how='outer', left_on='IMPRESSORA_ID', right_on='PrinterDeviceID')
+    df_registros_bd = df_registros_bd[['EnterpriseName','PrinterDeviceID','BrandName','PrinterModelName','SerialNumber']]
+    print('Dataframe registros_bd:')
+    print(df_registros_bd)    
+   
+    # # Concatena os dataframes do webservice e do banco de dados e identifica as diferenças
+    df_diff = pd.concat([df_webservice,df_registros_bd]).drop_duplicates(keep=False)
+    print('Dataframe de diferenças: ')
+    contagem = 0
     if df_diff.empty:
-        print("Não há diferenças entre os dados do webservice e os dados do banco de dados.")
-    else:   
-        print("Diferenças encontradas:")
-        print(df_diff)
-        impressoras = crud.read_impressoras()
+        print('Não há diferenças entre os dataframes.')
+    else:
+        for index, row in df_diff():
+            PRINTERDEVICEID = row['PrinterDeviceID']
+            PRINTERBRANDNAME = row['BrandName']
+            PRINTERMODELNAME = row['PrinterModelName']
+            SERIALNUMBER = row['SerialNumber']
+            crud.create_impressora(PRINTERDEVICEID, PRINTERBRANDNAME, PRINTERMODELNAME, SERIALNUMBER)
+            contagem += 1
+            print(f'{contagem} impressora(s) inserida(s) com sucesso.')
 
-        for index, row in df_diff.iterrows():
-            if row['IMPRESSORA_ID'] not in impressoras:
-                crud.create_impressora(row['IMPRESSORA_ID'])
-                print(f"Impressora {row['IMPRESSORA_ID']} inserida com sucesso.")
-
-    
-def verifica_impressoras_dataset():
-    """
-    Verifica e imprime o número de impressoras únicas no dataset compilado.
-
-    Lê o arquivo 'arquivo_final.csv', filtra os números de série únicos das impressoras e imprime a quantidade total.
-    """
-    file = 'testes/arquivo_final.csv'
-    df = pd.read_csv(file)
-    ids_impressoras = df['SerialNumber'].unique()
-    print(len(ids_impressoras))
-    
+           
 def ler_arquivo_compilado():
     """
     Lê o arquivo CSV compilado.
@@ -210,7 +203,11 @@ def transforma_arquivos():
     #     DateTimeRead = datetime.strptime(rows['DateTimeRead'], "%Y-%m-%dT%H:%M:%S").date()      
     #     print(DateTimeRead == RealDataCapture)
 
+    
 
 if __name__ == "__main__":
+    pass
+    # verifica_impressoras(data_atual='04-05-2024')
+    # insere_websersvice_banco()
+    # dados_webservice = obter_dados_webservice('04-05-2024')
     
-    verifica_impressoras('01-01-2022')
