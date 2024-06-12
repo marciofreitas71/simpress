@@ -1,49 +1,22 @@
-"""
-Este módulo contém funções para manipulação e inserção de dados de impressoras em um banco de dados a partir de arquivos CSV.
-
-Pacotes importados:
-- datetime: Para manipulação de datas e horas.
-- utils: Módulo utilitário contendo funções auxiliares.
-- crud: Módulo para operações CRUD (Create, Read, Update, Delete) no banco de dados.
-- pandas (pd): Para manipulação de dados em estruturas DataFrame.
-- logging: Para registro de eventos e mensagens.
-- csv: Para leitura e escrita de arquivos CSV.
-- os: Para interações com o sistema operacional, como manipulação de arquivos e diretórios.
-- re: Para operações com expressões regulares.
-
-Funções:
-- insere_dados_csv_to_bd(): Insere registros do webservice a partir de um arquivo CSV no banco de dados.
-- atualiza_lista_impressoras(csv_path): Atualiza a lista de impressoras no banco de dados a partir de um arquivo CSV.
-"""
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from datetime import datetime
-from utils import utils
-from app import crud
 import pandas as pd
 import logging
 import csv
-import os
 import re
+from app import crud
+from utils import utils
+
 
 def insere_dados_csv_to_bd():
-    """
-    Insere registros do webservice a partir de um arquivo CSV no banco de dados.
-
-    Lê um arquivo CSV contendo dados do webservice e insere esses registros em um banco de dados.
-    
-    O arquivo CSV esperado deve conter as colunas:
-    - 'RealDateCapture': Data de captura no formato 'YYYY-MM-DD'
-    - 'PrinterDeviceID': ID da impressora
-    - 'ReferenceMono': Referência de impressões monocromáticas
-    - 'ReferenceColor': Referência de impressões coloridas
-    
-    Cada registro é inserido no banco de dados utilizando a função 'create_contagem_impressoras' do módulo 'crud'.
-    """
     logging.basicConfig(level=logging.ERROR, format='%(asctime)s - %(levelname)s - %(message)s')
 
     contagem = 0
 
-    with open('temp/dados_compilados/df_filled_final.csv', mode='r', encoding='utf-8') as csvfile, \
+    with open('../temp/dados_compilados/df_filled_final.csv', mode='r', encoding='utf-8') as csvfile, \
          open('erros_log.csv', mode='w', newline='', encoding='utf-8') as errorfile:
         
         reader = pd.read_csv(csvfile, iterator=True, chunksize=1)
@@ -77,20 +50,6 @@ def insere_dados_csv_to_bd():
                 os.system('cls')
 
 def atualiza_lista_impressoras(csv_path):
-    """
-    Atualiza a lista de impressoras no banco de dados a partir de um arquivo CSV.
-
-    Lê um arquivo CSV contendo dados de impressoras e insere esses registros no banco de dados.
-    
-    Args:
-        csv_path (str): O caminho para o arquivo CSV contendo os dados das impressoras.
-    
-    O arquivo CSV esperado deve conter as colunas:
-    - 'PrinterDeviceID': ID da impressora
-    - 'BrandName': Nome da marca da impressora
-    - 'PrinterModelName': Nome do modelo da impressora
-    - 'SerialNumber': Número de série da impressora
-    """
     df = pd.read_csv(csv_path)
     for index, row in df.iterrows():
         PRINTERDEVICEID = row['PrinterDeviceID']
@@ -101,5 +60,5 @@ def atualiza_lista_impressoras(csv_path):
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
+    # atualiza_lista_impressoras('../temp/dados_compilados/df_impressoras.csv')
     insere_dados_csv_to_bd()
-    atualiza_lista_impressoras('temp/dados_compilados/df_impressoras.csv')

@@ -17,19 +17,20 @@ Funções:
 - df_impressoras(): Lê os dados de impressoras de um arquivo CSV específico.
 """
 
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from datetime import datetime, timedelta
 from tqdm import tqdm
 import pandas as pd
 import numpy as np
 from dotenv import load_dotenv
 import logging
-import sys
-import os
 import re
 
 load_dotenv()
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from app import webservice
 
 def salva_dados_csv(DateTimeStart, DateTimeEnd):
@@ -149,9 +150,9 @@ def df_impressoras():
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     data_inicial = '01-01-2022'
-    data_final = '31-05-2024'
+    data_final = '09-06-2024'
     data_inicial_bi = '01-01-2024'
     
     # salva_dados_csv(data_inicial, data_final)
-    gera_arquivo_csv_compilado('../temp/dados_diarios/')
+    gera_arquivo_csv_compilado('../temp/dados_diarios')
     preenche_dados_csv('../temp/dados_compilados/arquivo_final.csv', data_inicial, data_final, data_inicial_bi)

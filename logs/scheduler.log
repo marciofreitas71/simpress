@@ -13,3 +13,32 @@
 2024-06-04 16:56:25,870 - INFO - Scheduler em execução
 2024-06-04 16:56:25,871 - INFO - Added job "insere_websersvice_bd" to job store "default"
 2024-06-04 16:56:25,871 - INFO - Scheduler started
+2024-06-11 21:50:03,380 - INFO - Scheduler iniciado
+2024-06-11 21:50:03,477 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2024-06-11 21:50:03,477 - INFO - Scheduler em execução
+2024-06-11 21:50:03,478 - INFO - Added job "insere_webservice_bd" to job store "default"
+2024-06-11 21:50:03,478 - INFO - Scheduler started
+2024-06-11 21:56:56,919 - INFO - Scheduler iniciado
+2024-06-11 21:56:56,934 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2024-06-11 21:56:56,934 - INFO - Scheduler em execução
+2024-06-11 21:56:56,938 - INFO - Aguardando execução. Hora atual: 2024-06-11 21:56:56
+2024-06-11 21:56:56,939 - INFO - Added job "insere_webservice_bd" to job store "default"
+2024-06-11 21:56:56,940 - INFO - Scheduler started
+2024-06-11 21:58:36,296 - INFO - Scheduler iniciado
+2024-06-11 21:58:36,312 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2024-06-11 21:58:36,312 - INFO - Scheduler em execução
+2024-06-11 21:58:36,315 - INFO - Aguardando execução. Hora atual: 2024-06-11 21:58:36
+2024-06-11 21:58:36,317 - INFO - Added job "insere_webservice_bd" to job store "default"
+2024-06-11 21:58:36,317 - INFO - Scheduler started
+2024-06-11 22:02:56,008 - INFO - Scheduler iniciado
+2024-06-11 22:03:32,625 - INFO - Scheduler iniciado
+2024-06-11 22:04:47,571 - INFO - Scheduler iniciado
+2024-06-11 22:04:47,582 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2024-06-11 22:04:47,582 - INFO - Scheduler em execução
+2024-06-11 22:04:47,586 - INFO - Added job "insere_webservice_bd" to job store "default"
+2024-06-11 22:04:47,586 - INFO - Aguardando execução. Hora atual: 2024-06-11 22:04:47
+2024-06-11 22:04:47,586 - INFO - Scheduler started
+2024-06-11 22:05:47,586 - INFO - Aguardando execução. Hora atual: 2024-06-11 22:05:47
+2024-06-11 22:06:47,585 - INFO - Aguardando execução. Hora atual: 2024-06-11 22:06:47
+2024-06-11 22:07:02,148 - INFO - Scheduler interrompido
+2024-06-11 22:07:02,148 - INFO - Scheduler has been shut down
