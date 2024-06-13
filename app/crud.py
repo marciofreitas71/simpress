@@ -4,7 +4,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from datetime import datetime
 import pandas as pd
-from app import config
+from credenciais import config
 from app import webservice
 
 
@@ -257,4 +257,4 @@ if __name__ == '__main__':
     pass
     print(obter_ultima_data_bd())
     # print(read_all_record_data())
-    # print(obter_registros_ultima_data())
+    print(obter_registros_ultima_data())

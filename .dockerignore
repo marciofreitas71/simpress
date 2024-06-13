@@ -1,4 +1,8 @@
-__pycache__/
+# Ignore todos os arquivos das pastas:
+.ipynb_checkpoints/
 venv/
-config.py
-.env
+__pycache__/
+testes/
+arquivos/
+data/
+temp/

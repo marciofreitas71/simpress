@@ -18,42 +18,43 @@ def insere_webservice_bd():
     utils.insere_webservice_banco()
     logging.info("Execução de insere_websersvice_banco concluída")
 
-def verificar_condicao_de_espera():
-    while True:
-        now = datetime.now()
-        logging.info(f'Aguardando execução. Hora atual: {now.strftime("%Y-%m-%d %H:%M:%S")}')
-        scheduler.print_jobs()  # Imprime os jobs agendados
-        print('Aguardando execução. Pressione Ctrl+C para interromper.')
+# def verificar_condicao_de_espera():
+#     while True:
+#         now = datetime.now()
+#         logging.info(f'Aguardando execução. Hora atual: {now.strftime("%Y-%m-%d %H:%M:%S")}')
+#         scheduler.print_jobs()  # Imprime os jobs agendados
+#         print('Aguardando execução. Pressione Ctrl+C para interromper.')
 
-        time.sleep(60)  # Verifica a cada minuto
+#         time.sleep(60)  # Verifica a cada minuto
 
 if __name__ == "__main__":
-    # Cria a pasta logs se não existir
-    if not os.path.exists('logs'):
-        os.makedirs('logs')
+    # # Cria a pasta logs se não existir
+    # if not os.path.exists('logs'):
+    #     os.makedirs('logs')
 
-    # Configuração do logging
-    logging.basicConfig(filename='logs/scheduler.log', level=logging.INFO,
-                        format='%(asctime)s - %(levelname)s - %(message)s')
-    logging.info('Scheduler iniciado')
+    # # Configuração do logging
+    # logging.basicConfig(filename='logs/scheduler.log', level=logging.INFO,
+    #                     format='%(asctime)s - %(levelname)s - %(message)s')
+    # logging.info('Scheduler iniciado')
 
-    # Configuração do agendamento
-    scheduler = BlockingScheduler()
+    # # Configuração do agendamento
+    # scheduler = BlockingScheduler()
 
-    # Adiciona um trabalho ao scheduler para executar insere_webservice_bd diariamente às 16:56:00
-    scheduler.add_job(insere_webservice_bd, 'cron', hour=2, minute=00, second=0)
+    # # Adiciona um trabalho ao scheduler para executar insere_webservice_bd diariamente às 16:56:00
+    # scheduler.add_job(insere_webservice_bd, 'cron', hour=2, minute=00, second=0)
 
-    try:
-        logging.info('Scheduler em execução')
+    # try:
+    #     logging.info('Scheduler em execução')
 
-        # Inicia o scheduler em um thread separado para permitir o loop de verificação
-        scheduler_thread = Thread(target=scheduler.start)
-        scheduler_thread.start()
+    #     # Inicia o scheduler em um thread separado para permitir o loop de verificação
+    #     scheduler_thread = Thread(target=scheduler.start)
+    #     scheduler_thread.start()
 
-        # Inicia a verificação da condição de espera
-        verificar_condicao_de_espera()
+    #     # Inicia a verificação da condição de espera
+    #     verificar_condicao_de_espera()
 
-    except (KeyboardInterrupt, SystemExit):
-        logging.info('Scheduler interrompido')
-        # Encerra o scheduler de forma segura
-        scheduler.shutdown()
+    # except (KeyboardInterrupt, SystemExit):
+    #     logging.info('Scheduler interrompido')
+    #     # Encerra o scheduler de forma segura
+    #     scheduler.shutdown()
+    insere_webservice_bd()

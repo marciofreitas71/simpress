@@ -6,10 +6,12 @@ import pandas as pd
 from datetime import datetime, timedelta
 from tqdm import tqdm
 
+from credenciais import config
+
 # Adiciona o caminho do projeto ao PYTHONPATH
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from app import webservice, crud, config
+from app import webservice, crud
 
 def obter_dados_webservice(data):
     """

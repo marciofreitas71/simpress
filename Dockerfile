@@ -1,20 +1,17 @@
-# Use a imagem oficial do Python como base
-FROM python:3.10.10
+# Use uma imagem base oficial do Python
+FROM python:3.12
 
-# Define o diretório de trabalho dentro do contêiner
+# Defina o diretório de trabalho
 WORKDIR /app
 
-# Copia os arquivos necessários para o diretório de trabalho
+# Copie o arquivo de dependências
 COPY requirements.txt .
 
-# Instala as dependências do projeto
+# Instale as dependências
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copia o restante dos arquivos para o diretório de trabalho
+# Copie todo o conteúdo do projeto para o diretório de trabalho
 COPY . .
 
-# Expõe a porta que a aplicação estará ouvindo (se necessário)
-EXPOSE 5000
-
-# Comando para executar a aplicação quando o contêiner for iniciado
-CMD ["python", "simpress_print.py"]
+# Comando para rodar a aplicação
+CMD ["python", "main.py"]

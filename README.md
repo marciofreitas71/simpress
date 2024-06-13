@@ -21,7 +21,7 @@ Este projeto é uma aplicação completa que realiza a manipulação, análise e
 
 ## Configuração
 ### Arquivo .env
-Crie um arquivo .env na raiz do projeto com as seguintes variáveis:
+Crie um arquivo .env na pasta 'credenciais' do projeto com as seguintes variáveis:
 
 ```
 user_name=<SEU_USUARIO>
@@ -30,6 +30,9 @@ host=<SEU_HOST>
 port=<SUA_PORTA>
 service_name=<SEU_SERVICE_NAME>
 ```
+### Arquivo config.py
+
+Define variáveis e configurações necessárias para acessar um serviço web SOAP e fazer uma chamada a este serviço. O serviço web em questão é o "CountersWS" fornecido pela URL especificada no formato WSDL.
 
 ## Instalação
 Clone o repositório na pasta 'simpress':
@@ -55,10 +58,11 @@ Este script irá:
 - Criar e ativar o ambiente virtual venv.
 - Instalar as dependências listadas no requirements.txt.
 
+Ative o 
+
 ## Funcionalidade
 ### Configuração e Conexão
 config.py
-
 
 Estabelece uma conexão com o banco de dados Oracle.
 
@@ -80,7 +84,6 @@ Exemplo:
 ### Operações CRUD
 crud.py
 
-
 Este módulo define operações CRUD (Create, Read, Update, Delete) para manipulação dos dados no banco de dados.
 
 Pacotes importados:
@@ -97,10 +100,8 @@ Funções:
 - delete_all_impressoras(): Exclui todas as impressoras do banco de dados.
 - read_impressoras_data(): Lê os registros de contagem de impressoras do banco de dados para uma determinada data.
 
-
 ## Consultas SQL
 queries.py
-
 
 Este módulo contém consultas SQL para operações CRUD no banco de dados.
 
@@ -111,10 +112,8 @@ Consultas:
 - UPDATE_IMPRESSORA: Consulta para atualizar os detalhes de uma impressora no banco de dados.
 - DELETE_IMPRESSORA: Consulta para excluir uma impressora do banco de dados com base no ID do dispositivo da impressora.
 
-
 ## Modelos
 models.py
-
 
 Este módulo define classes que representam os modelos de dados do banco de dados.
 
@@ -124,7 +123,6 @@ Classes:
 
 ## Webservice
 webservice.py
-
 
 Módulo webservice
 
@@ -148,7 +146,6 @@ Funções:
 
 ## Manipulação e Análise de Dados
 prepara_dados.py
-
 
 Este módulo contém funções para manipulação e inserção de dados de impressoras em um banco de dados a partir de arquivos CSV.
 
@@ -204,7 +201,6 @@ Execute o script:
 ```
 python scripts/prepara_dados.py
 ```
-
 ### Análise e Visualização
 analise_graficos.py
 

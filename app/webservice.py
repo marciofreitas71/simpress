@@ -30,7 +30,7 @@ from datetime import datetime, timedelta
 import pandas as pd
 import logging
 import zeep
-from app import config
+from credenciais import config
 
 
 load_dotenv()
