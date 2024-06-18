@@ -2,8 +2,8 @@
 .ipynb_checkpoints/
 venv/
 __pycache__/
-.env
-config.py
+credenciais/.env
+credenciais/config.py
 simpress_env/
 testes/
 arquivos/
