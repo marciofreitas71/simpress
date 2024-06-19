@@ -45,21 +45,21 @@ def obter_hostname_por_ip(ip):
     except socket.gaierror:
         return "Endereço IP inválido"
 
+def obter_ultima_data_bd():
+    """
+    Recupera a data do último registro no banco de dados.
+
+    Returns:
+        datetime: Data do último registro no banco de dados.
+    """
+    ultima_data_bd = crud.obter_ultima_data_bd()
+    return ultima_data_bd
+
 def insere_webservice_banco():
     """
     Insere dados do webservice no banco de dados para todos os dias entre a última execução e a data atual.
     """
-
-    def obter_ultima_data_bd():
-        """
-        Recupera a data do último registro no banco de dados.
-
-        Returns:
-            datetime: Data do último registro no banco de dados.
-        """
-        ultima_data_bd = crud.obter_ultima_data_bd()
-        return ultima_data_bd
-
+    
     # Recupera a data do último registro no banco de dados
     ultima_data_bd = obter_ultima_data_bd()
     if not ultima_data_bd:
@@ -211,3 +211,4 @@ if __name__ == "__main__":
     # verifica_impressoras(data_atual='09-05-2024')
     # insere_webservice_banco()
     # dados_webservice = obter_dados_webservice('04-05-2024')
+    print(obter_ultima_data_bd())
