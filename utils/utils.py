@@ -1,15 +1,17 @@
 import sys
 import os
+
+# Adiciona o caminho do projeto ao PYTHONPATH
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import logging
 import socket
 import pandas as pd
 from datetime import datetime, timedelta
 from tqdm import tqdm
+from app import webservice
 
-from credenciais import config
 
-# Adiciona o caminho do projeto ao PYTHONPATH
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app import webservice, crud
 
@@ -45,12 +47,8 @@ def obter_hostname_por_ip(ip):
     except socket.gaierror:
         return "Endereço IP inválido"
 
-def insere_webservice_banco():
-    """
-    Insere dados do webservice no banco de dados para todos os dias entre a última execução e a data atual.
-    """
 
-    def obter_ultima_data_bd():
+def obter_ultima_data_bd():
         """
         Recupera a data do último registro no banco de dados.
 
@@ -59,6 +57,12 @@ def insere_webservice_banco():
         """
         ultima_data_bd = crud.obter_ultima_data_bd()
         return ultima_data_bd
+
+
+def insere_webservice_banco():
+    """
+    Insere dados do webservice no banco de dados para todos os dias entre a última execução e a data atual.
+    """
 
     # Recupera a data do último registro no banco de dados
     ultima_data_bd = obter_ultima_data_bd()
@@ -72,15 +76,19 @@ def insere_webservice_banco():
 
     # Define a data de início como o dia seguinte ao último registro no banco de dados
     data_inicio = (ultima_data_bd + timedelta(days=1)).date()
+    print(f"Data de inicio: {data_inicio}")
 
     # Define a data de fim como a data atual
     data_fim = datetime.now().date()   
     data_fim = data_fim - timedelta(days=1)
+    print(F"Data de fim: {data_fim}")
 
     # Corrige a data de início se data_inicio for posterior a data_fim
     if data_inicio > data_fim:
         print("A data de início é posterior à data de fim. Ajustando data de início para data de fim.")
+        data_temp = data_inicio
         data_inicio = data_fim
+        data_fim = data_temp
 
     print(f"Data de início ajustada: {data_inicio}")
     print(f"Data de fim ajustada: {data_fim}")
@@ -97,7 +105,14 @@ def insere_webservice_banco():
        
         print(f"Processando dados para a data {data.strftime('%d-%m-%Y')}...")
         # Cria um dataframe com os dados do webservice para a data especificada
-        df_webservice = obter_dados_webservice(data.strftime('%d-%m-%Y'))
+        
+        # df_webservice = obter_dados_webservice(data.strftime('%d-%m-%Y'))
+        df_webservice = webservice.recuperar_dados(data.strftime('%d-%m-%Y'))
+
+        if df_webservice.empty:
+            print(f"Não há registros para a data {data.strftime('%d-%m-%Y')}.")
+            df_webservice = webservice.recuperar_dados(ultima_data_bd.strftime('%d-%m-%Y'))
+            return
 
         print(data.strftime('%d-%m-%Y'))
 
@@ -105,8 +120,7 @@ def insere_webservice_banco():
         registros_bd = crud.read_impressoras_data(ultima_data_bd.strftime('%d-%m-%Y'))
         
         colunas = ['ID', 'IMPRESSORA_ID', 'CONTADOR_PB', 'CONTADOR_COR', 'CONTADOR_TOTAL', 'DATA_LEITURA', 'CREATED_AT']
-        df_database = pd.DataFrame(registros_bd, columns=colunas) if registros_bd else pd.DataFrame(columns=colunas)
-        
+        df_database = pd.DataFrame(registros_bd, columns=colunas) if registros_bd else pd.DataFrame(columns=colunas)        
     
         print("Registros do banco de dados:")
         print(len(df_database))
@@ -157,7 +171,14 @@ def verifica_impressoras(data_atual=None):
     while recuperando_impressoras:
         print('Recuperando impressoras do webservice...')
         # Cria um dataframe com os dados do webservice para a data especificada
+        
         df_webservice = webservice.recuperar_dados(data_fim.strftime('%d-%m-%Y'))
+        if df_webservice == None:
+            print(f"Não há registros para a data {data_fim.strftime('%d-%m-%Y')}.")
+            data_fim = data_fim - timedelta(days=1)
+            df_webservice = webservice.recuperar_dados(data_fim.strftime('%d-%m-%Y'))
+            df_webservice = webservice.recuperar_dados(.strftime('%d-%m-%Y'))
+        
         recuperando_impressoras = False
         print('Impressoras recuperadas com sucesso.')
     
@@ -208,6 +229,7 @@ def transforma_arquivos():
 
 if __name__ == "__main__":
     pass
-    # verifica_impressoras(data_atual='09-05-2024')
+    # verifica_impressoras(data_atual='25-06-2024')
     # insere_webservice_banco()
-    # dados_webservice = obter_dados_webservice('04-05-2024')
+    dados_webservice = webservice.recuperar_dados('22-05-2024')
+    print(dados_webservice)
