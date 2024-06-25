@@ -2,6 +2,7 @@ import os
 import logging
 import time
 from utils import utils
+from app import crud
 from apscheduler.schedulers.blocking import BlockingScheduler
 from datetime import datetime
 from threading import Thread
@@ -28,6 +29,7 @@ def insere_webservice_bd():
 #         time.sleep(60)  # Verifica a cada minuto
 
 if __name__ == "__main__":
+    insere_webservice_bd()
     # # Cria a pasta logs se não existir
     # if not os.path.exists('logs'):
     #     os.makedirs('logs')
@@ -40,8 +42,8 @@ if __name__ == "__main__":
     # # Configuração do agendamento
     # scheduler = BlockingScheduler()
 
-    # # Adiciona um trabalho ao scheduler para executar insere_webservice_bd diariamente às 16:56:00
-    # scheduler.add_job(insere_webservice_bd, 'cron', hour=2, minute=00, second=0)
+    # # Adiciona um trabalho ao scheduler para executar insere_webservice_bd diariamente às 02:00:00
+    # scheduler.add_job(insere_webservice_bd, 'cron', hour=2, minute=0, second=0)
 
     # try:
     #     logging.info('Scheduler em execução')
@@ -57,4 +59,4 @@ if __name__ == "__main__":
     #     logging.info('Scheduler interrompido')
     #     # Encerra o scheduler de forma segura
     #     scheduler.shutdown()
-    insere_webservice_bd()
+    
