@@ -32,8 +32,13 @@ import logging
 import zeep
 from credenciais import config
 
-
 load_dotenv()
+
+import logging
+import pandas as pd
+from datetime import datetime, timedelta
+from io import StringIO
+import zeep
 
 def recuperar_dados(data):
     """
@@ -54,29 +59,53 @@ def recuperar_dados(data):
     """
     logging.info("Executando a função recuperar_dados_webservice... ")
     
-    # Converte a data fornecida para um objeto datetime
     data_objeto = datetime.strptime(data, "%d-%m-%Y")
-    data_objeto += timedelta(days=1)
-    dateTimeEnd = data_objeto.strftime("%Y-%m-%d")
-    config.payload['dateTimeEnd'] = f'{dateTimeEnd} 00:00:00'
+    
+    df = pd.DataFrame()
+    
+    while df.empty:
+        # Converte a data fornecida para um objeto datetime
+        dateTimeEnd = data_objeto.strftime("%Y-%m-%d")
+        config.payload['dateTimeEnd'] = f'{dateTimeEnd} 00:00:00'
 
-    try:
-        # Cria um cliente SOAP usando a URL do WSDL com timeout
-        client = zeep.Client(wsdl=config.wsdl_url, transport=zeep.Transport(timeout=10))
-        logging.info("Cliente SOAP criado com sucesso")
+        try:
+            # Cria um cliente SOAP usando a URL do WSDL com timeout
+            client = zeep.Client(wsdl=config.wsdl_url, transport=zeep.Transport(timeout=10))
+            logging.info("Cliente SOAP criado com sucesso")
+            
+            # Acessa o método do serviço e envia a solicitação com os dados
+            service = client.service
+            method_to_call = getattr(service, config.service_method)
+            response = method_to_call(**config.payload)
+            logging.info("Solicitação enviada ao serviço SOAP")
         
-        # Acessa o método do serviço e envia a solicitação com os dados
-        service = client.service
-        method_to_call = getattr(service, config.service_method)
-        response = method_to_call(**config.payload)
-        logging.info("Solicitação enviada ao serviço SOAP")
+            # Processa a resposta do serviço e converte para DataFrame
+            df = pd.read_json(StringIO(response))        
+            print(df)
 
-        # Processa a resposta do serviço e converte para DataFrame
-        df = pd.read_json(StringIO(response))
-        return df[df['BrandName'] == 'HP']
-    except zeep.exceptions.Fault as e:
-        logging.error(f"Erro durante a execução do serviço: {str(e)}")
-        raise
-    except zeep.exceptions.TransportError as e:
-        logging.error(f"Erro de transporte durante a execução do serviço: {str(e)}")
-        raise
+            if df.empty:
+                logging.info(f"Nenhum dado encontrado para a data {dateTimeEnd}. Retrocedendo um dia.")
+                data_objeto -= timedelta(days=1)
+            else:
+                if 'BrandName' in df.columns:
+                    return df[df['BrandName'] == 'HP']
+                else:
+                    logging.error("A coluna 'BrandName' não foi encontrada no DataFrame")
+                    raise KeyError('BrandName')
+        
+        except zeep.exceptions.Fault as e:
+            logging.error(f"Erro durante a execução do serviço: {str(e)}")
+            raise
+        except zeep.exceptions.TransportError as e:
+            logging.error(f"Erro de transporte durante a execução do serviço: {str(e)}")
+            raise
+        except KeyError as e:
+            logging.error(f"A coluna {str(e)} não foi encontrada no DataFrame")
+            raise
+
+if __name__ == "__main__":
+    # Recupera os dados do webservice para a data especificada
+    data = "23-06-2024"
+
+    df = recuperar_dados(data)
+    # print(df)
