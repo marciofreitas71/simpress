@@ -1,8 +1,9 @@
 # Ignore todos os arquivos das pastas:
 .ipynb_checkpoints/
-venv/
+simpress_env/
 __pycache__/
 testes/
-arquivos/
+venv/
 data/
 temp/
+logs/

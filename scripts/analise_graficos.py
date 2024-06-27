@@ -5,7 +5,7 @@ import plotly.express as px
 import pandas as pd
 
 # Carregar o arquivo CSV
-file_path = '../testes/data/contagem_impressora_01-01-2024-11-06-2024.csv'
+file_path = '../testes/data/contagem_impressora.csv'
 data = pd.read_csv(file_path)
 
 # Converter a coluna de datas para o formato datetime
@@ -57,6 +57,18 @@ app.layout = html.Div([
     ]
 )
 def update_graph(selected_impressoras, start_date, end_date, selected_contador):
+    """
+    Atualiza o gráfico com base nas impressoras selecionadas, intervalo de datas e contador escolhido.
+
+    Args:
+        selected_impressoras (list): Lista de IDs das impressoras selecionadas.
+        start_date (str): Data inicial do intervalo selecionado.
+        end_date (str): Data final do intervalo selecionado.
+        selected_contador (str): Contador escolhido ('CONTADOR_PB', 'CONTADOR_COR', 'CONTADOR_TOTAL').
+
+    Returns:
+        plotly.graph_objs._figure.Figure: Figura atualizada com os dados filtrados.
+    """
     filtered_data = data[(data['DATA_LEITURA'] >= start_date) & (data['DATA_LEITURA'] <= end_date)]
     
     if selected_impressoras:
@@ -68,4 +80,5 @@ def update_graph(selected_impressoras, start_date, end_date, selected_contador):
     return fig
 
 if __name__ == '__main__':
+    # Executa o servidor do aplicativo Dash
     app.run_server(debug=True)

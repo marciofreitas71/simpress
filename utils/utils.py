@@ -65,7 +65,7 @@ def insere_webservice_banco():
     """
 
     # Recupera a data do último registro no banco de dados
-    ultima_data_bd = obter_ultima_data_bd()
+    ultima_data_bd = crud.obter_ultima_data_bd()
     if not ultima_data_bd:
         print("Não há registros anteriores no banco de dados.")
         return
@@ -109,11 +109,6 @@ def insere_webservice_banco():
         # df_webservice = obter_dados_webservice(data.strftime('%d-%m-%Y'))
         df_webservice = webservice.recuperar_dados(data.strftime('%d-%m-%Y'))
 
-        if df_webservice.empty:
-            print(f"Não há registros para a data {data.strftime('%d-%m-%Y')}.")
-            df_webservice = webservice.recuperar_dados(ultima_data_bd.strftime('%d-%m-%Y'))
-            return
-
         print(data.strftime('%d-%m-%Y'))
 
         # Cria um dataframe pandas com os dados do último registro no banco de dados
@@ -128,6 +123,12 @@ def insere_webservice_banco():
         print(len(df_webservice))
         df_webservice = df_webservice.rename(columns={'PrinterDeviceID': 'IMPRESSORA_ID', 'DateTimeRead': 'DATA_LEITURA', 'ReferenceMono': 'CONTADOR_PB', 'ReferenceColor': 'CONTADOR_COR', })
         df_webservice = df_webservice[['IMPRESSORA_ID', 'CONTADOR_PB', 'CONTADOR_COR', 'DATA_LEITURA']]
+
+        # Converte a coluna DATA_LEITURA para datetime
+        df_webservice['DATA_LEITURA'] = pd.to_datetime(df_webservice['DATA_LEITURA'], format="%Y-%m-%dT%H:%M:%S")
+
+        # Formata a coluna para o formato que o Oracle aceita
+        df_webservice['DATA_LEITURA_FORMATADA'] = df_webservice['DATA_LEITURA'].dt.strftime('%Y-%m-%d %H:%M:%S')
 
         # Concatena os dataframes do webservice e do banco de dados e identifica as diferenças
         df_concatenado = pd.concat([df_webservice, df_database], axis=0)
@@ -173,12 +174,7 @@ def verifica_impressoras(data_atual=None):
         # Cria um dataframe com os dados do webservice para a data especificada
         
         df_webservice = webservice.recuperar_dados(data_fim.strftime('%d-%m-%Y'))
-        if df_webservice == None:
-            print(f"Não há registros para a data {data_fim.strftime('%d-%m-%Y')}.")
-            data_fim = data_fim - timedelta(days=1)
-            df_webservice = webservice.recuperar_dados(data_fim.strftime('%d-%m-%Y'))
-            df_webservice = webservice.recuperar_dados(.strftime('%d-%m-%Y'))
-        
+              
         recuperando_impressoras = False
         print('Impressoras recuperadas com sucesso.')
     
@@ -229,7 +225,7 @@ def transforma_arquivos():
 
 if __name__ == "__main__":
     pass
-    # verifica_impressoras(data_atual='25-06-2024')
+    verifica_impressoras(data_atual='24-06-2024')
     # insere_webservice_banco()
-    dados_webservice = webservice.recuperar_dados('22-05-2024')
-    print(dados_webservice)
+    # dados_webservice = webservice.recuperar_dados('22-05-2024')
+    # print(dados_webservice)

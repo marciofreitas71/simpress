@@ -4,7 +4,6 @@ import os
 # Adiciona o caminho do projeto ao PYTHONPATH
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-
 """
 Este módulo contém consultas SQL para operações CRUD no banco de dados.
 
@@ -14,6 +13,7 @@ Consultas:
 - SELECT_IMPRESSORA: Consulta para selecionar uma impressora com base no ID do dispositivo da impressora.
 - UPDATE_IMPRESSORA: Consulta para atualizar os detalhes de uma impressora no banco de dados.
 - DELETE_IMPRESSORA: Consulta para excluir uma impressora do banco de dados com base no ID do dispositivo da impressora.
+- SELECT_LAST_READING_DATE: Consulta para recuperar a última data de leitura no banco de dados.
 """
 
 # Consulta para selecionar todas as contagens de impressoras associadas a uma impressora específica.
@@ -84,4 +84,3 @@ DELETE FROM impressoras WHERE PRINTERDEVICEID = :printer_device_id
 SELECT_LAST_READING_DATE = """
 SELECT MAX(DATA_LEITURA) FROM contagem_impressoras
 """
-

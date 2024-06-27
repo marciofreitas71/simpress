@@ -1,17 +1,17 @@
-# Use uma imagem base oficial do Python
+# Usar uma imagem base oficial do Python
 FROM python:3.12
 
-# Defina o diretório de trabalho
+# Definir o diretório de trabalho no container
 WORKDIR /app
 
-# Copie o arquivo de dependências
-COPY requirements.txt .
+# Copiar o arquivo de dependências primeiro, para aproveitar o cache de camadas
+COPY requirements.txt ./
 
-# Instale as dependências
+# Instalar as dependências do projeto
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copie todo o conteúdo do projeto para o diretório de trabalho
+# Copiar o resto do código fonte do projeto para o diretório de trabalho
 COPY . .
 
 # Comando para rodar a aplicação
-CMD ["python", "main.py"]
+CMD ["python", "main.py"]d

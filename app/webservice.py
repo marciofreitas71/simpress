@@ -11,8 +11,6 @@ Pacotes importados:
     load_dotenv (dotenv): Para carregar variáveis de ambiente de um arquivo .env.
     datetime, timedelta (datetime): Para manipulação de datas e horários.
     pandas as pd: Para manipulação e análise de dados.
-    webservice (app): Para funcionalidades adicionais do aplicativo.
-    config (app): Para configuração do aplicativo.
     logging: Para registro de eventos e mensagens.
     zeep: Para interações com serviços da web SOAP.
 
@@ -25,20 +23,11 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from io import StringIO
-from dotenv import load_dotenv
 from datetime import datetime, timedelta
 import pandas as pd
 import logging
 import zeep
 from credenciais import config
-
-load_dotenv()
-
-import logging
-import pandas as pd
-from datetime import datetime, timedelta
-from io import StringIO
-import zeep
 
 def recuperar_dados(data):
     """
@@ -53,11 +42,12 @@ def recuperar_dados(data):
     Raises:
         zeep.exceptions.Fault: Se ocorrer um erro durante a execução do serviço.
         zeep.exceptions.TransportError: Se ocorrer um erro de transporte durante a execução do serviço.
+        KeyError: Se a coluna 'BrandName' não for encontrada no DataFrame.
     
     Exemplo:
         >>> df = recuperar_dados("01-01-2023")
     """
-    logging.info("Executando a função recuperar_dados_webservice... ")
+    logging.info("Executando a função recuperar_dados... ")
     
     data_objeto = datetime.strptime(data, "%d-%m-%Y")
     
@@ -80,7 +70,8 @@ def recuperar_dados(data):
             logging.info("Solicitação enviada ao serviço SOAP")
         
             # Processa a resposta do serviço e converte para DataFrame
-            df = pd.read_json(StringIO(response))        
+            df = pd.read_json(StringIO(response))
+            logging.info("Resposta recebida e convertida para DataFrame")
             print(df)
 
             if df.empty:
@@ -106,6 +97,5 @@ def recuperar_dados(data):
 if __name__ == "__main__":
     # Recupera os dados do webservice para a data especificada
     data = "23-06-2024"
-
     df = recuperar_dados(data)
     # print(df)
