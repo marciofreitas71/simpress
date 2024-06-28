@@ -81,18 +81,6 @@ app.layout = html.Div([
     ]
 )
 def update_graph(start_date, end_date, selected_printers, selected_serials):
-    """
-    Atualiza o gráfico com base nos filtros selecionados.
-
-    Args:
-        start_date (str): Data inicial do intervalo selecionado.
-        end_date (str): Data final do intervalo selecionado.
-        selected_printers (list): Lista de IDs das impressoras selecionadas.
-        selected_serials (list): Lista de números de série selecionados.
-
-    Returns:
-        plotly.graph_objs._figure.Figure: Figura atualizada com os dados filtrados.
-    """
     # Filtrar os dados
     filtered_df = df[(df['RealDateCapture'] >= start_date) & (df['RealDateCapture'] <= end_date)]
     if selected_printers:
@@ -122,5 +110,4 @@ def update_graph(start_date, end_date, selected_printers, selected_serials):
 
 # Executar o aplicativo
 if __name__ == '__main__':
-    # Executa o servidor do aplicativo Dash
     app.run_server(debug=True)

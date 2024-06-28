@@ -3,7 +3,7 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import oracledb
-from dotenv import load_dotenv
+
 
 load_dotenv()
 
@@ -25,7 +25,7 @@ def get_connection():
         ValueError: Se algum valor necessário estiver ausente no arquivo de ambiente.
 
     Returns:
-        oracledb.Connection: Uma conexão ativa com o banco de dados Oracle.
+        Connection: Uma conexão ativa com o banco de dados Oracle.
 
     Exemplo:
     >>> connection = get_connection()

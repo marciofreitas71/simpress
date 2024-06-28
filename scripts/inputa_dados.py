@@ -6,22 +6,12 @@ from datetime import datetime
 import pandas as pd
 import logging
 import csv
+import re
 from app import crud
 from utils import utils
 
+
 def insere_dados_csv_to_bd():
-    """
-    Insere dados de um arquivo CSV no banco de dados.
-
-    Esta função lê dados de contagem de impressoras de um arquivo CSV e insere esses dados no banco de dados.
-    Em caso de erro, registra o erro em um arquivo CSV separado.
-
-    Arquivos:
-        - '../temp/dados_compilados/df_filled_final.csv': Arquivo CSV de entrada com os dados a serem inseridos.
-        - 'erros_log.csv': Arquivo CSV de saída para registrar os erros encontrados.
-
-    Registros de log são configurados para nível de erro.
-    """
     logging.basicConfig(level=logging.ERROR, format='%(asctime)s - %(levelname)s - %(message)s')
 
     contagem = 0
@@ -60,14 +50,6 @@ def insere_dados_csv_to_bd():
                 os.system('cls')
 
 def atualiza_lista_impressoras(csv_path):
-    """
-    Atualiza a lista de impressoras no banco de dados a partir de um arquivo CSV.
-
-    Args:
-        csv_path (str): Caminho para o arquivo CSV contendo os dados das impressoras.
-
-    Esta função lê os dados de impressoras de um arquivo CSV e insere ou atualiza esses dados no banco de dados.
-    """
     df = pd.read_csv(csv_path)
     for index, row in df.iterrows():
         PRINTERDEVICEID = row['PrinterDeviceID']

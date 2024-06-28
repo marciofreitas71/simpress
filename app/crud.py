@@ -7,6 +7,7 @@ import pandas as pd
 from credenciais import config
 from app import webservice
 
+
 """
 Este módulo define operações CRUD (Create, Read, Update, Delete) para manipulação dos dados no banco de dados.
 
@@ -23,27 +24,10 @@ Funções:
 - delete_all_registros(): Exclui todos os registros de contagem de impressoras do banco de dados.
 - delete_all_impressoras(): Exclui todas as impressoras do banco de dados.
 - read_impressoras_data(): Lê os registros de contagem de impressoras do banco de dados para uma determinada data.
-- read_all_record_data(): Lê todos os registros da tabela contagem_impressora do banco de dados.
-- obter_registros_ultima_data(): Obtém registros da última data de leitura no banco de dados.
-- obter_ultima_data_bd(): Obtém a última data de leitura no banco de dados.
+- read_all_records(): Lê todos os registros da tabela contagem_impressora do banco de dados.
 """
 
 def create_impressora(PRINTERDEVICEID, PRINTERBRANDNAME, PRINTERMODELNAME, SERIALNUMBER):
-    """
-    Cria uma nova impressora no banco de dados.
-
-    Args:
-        PRINTERDEVICEID (str): O ID do dispositivo da impressora.
-        PRINTERBRANDNAME (str): O nome da marca da impressora.
-        PRINTERMODELNAME (str): O nome do modelo da impressora.
-        SERIALNUMBER (str): O número de série da impressora.
-
-    Returns:
-        bool: True se a impressora foi criada com sucesso, False se a impressora já existe.
-
-    Raises:
-        Exception: Se ocorrer um erro ao inserir a impressora no banco de dados.
-    """
     connection = config.get_connection()
     cursor = connection.cursor()
     
@@ -80,18 +64,6 @@ def create_impressora(PRINTERDEVICEID, PRINTERBRANDNAME, PRINTERMODELNAME, SERIA
     return True
 
 def create_contagem_impressoras(impressora_id, contador_pb, contador_cor, data_leitura):
-    """
-    Registra uma contagem de impressoras no banco de dados.
-
-    Args:
-        impressora_id (int): O ID da impressora associada à contagem.
-        contador_pb (int): O contador de impressões em preto e branco.
-        contador_cor (int): O contador de impressões coloridas.
-        data_leitura (datetime): A data e hora da leitura do contador.
-
-    Raises:
-        Exception: Se ocorrer um erro ao inserir a contagem no banco de dados.
-    """
     connection = config.get_connection()
     cursor = connection.cursor()
     
@@ -126,18 +98,6 @@ def create_contagem_impressoras(impressora_id, contador_pb, contador_cor, data_l
     connection.close()
 
 def read_contagem_impressoras(impressora_id):
-    """
-    Lê os registros de contagem de impressoras do banco de dados.
-
-    Args:
-        impressora_id (int): O ID da impressora cujas contagens devem ser selecionadas.
-
-    Returns:
-        list: Uma lista de registros de contagem de impressoras.
-
-    Raises:
-        Exception: Se ocorrer um erro ao ler os registros de contagem de impressoras.
-    """
     connection = config.get_connection()
     cursor = connection.cursor()
 
@@ -151,19 +111,6 @@ def read_contagem_impressoras(impressora_id):
     return result
 
 def update_contagem_impressora(impressora_id, contador_pb=None, contador_cor=None, contador_total=None, data_leitura=None):
-    """
-    Atualiza os registros de contagem de impressoras no banco de dados.
-
-    Args:
-        impressora_id (int): O ID da impressora associada à contagem.
-        contador_pb (int, optional): O novo contador de impressões em preto e branco.
-        contador_cor (int, optional): O novo contador de impressões coloridas.
-        contador_total (int, optional): O novo contador total de impressões.
-        data_leitura (datetime, optional): A nova data e hora da leitura do contador.
-
-    Raises:
-        Exception: Se ocorrer um erro ao atualizar os registros de contagem de impressoras.
-    """
     connection = config.get_connection()
     cursor = connection.cursor()
 
@@ -188,15 +135,6 @@ def update_contagem_impressora(impressora_id, contador_pb=None, contador_cor=Non
     connection.close()
 
 def delete_contagem_impressora(impressora_id):
-    """
-    Exclui os registros de contagem de impressoras do banco de dados.
-
-    Args:
-        impressora_id (int): O ID da impressora cujos registros de contagem devem ser excluídos.
-
-    Raises:
-        Exception: Se ocorrer um erro ao excluir os registros de contagem de impressoras.
-    """
     connection = config.get_connection()
     cursor = connection.cursor()
 
@@ -208,12 +146,6 @@ def delete_contagem_impressora(impressora_id):
     connection.close()
 
 def delete_all_registros():
-    """
-    Exclui todos os registros de contagem de impressoras do banco de dados.
-
-    Raises:
-        Exception: Se ocorrer um erro ao excluir todos os registros de contagem de impressoras.
-    """
     connection = config.get_connection()
     cursor = connection.cursor()
 
@@ -225,12 +157,6 @@ def delete_all_registros():
     connection.close()
 
 def delete_all_impressoras():
-    """
-    Exclui todas as impressoras do banco de dados.
-
-    Raises:
-        Exception: Se ocorrer um erro ao excluir todas as impressoras.
-    """
     connection = config.get_connection()
     cursor = connection.cursor()
 
@@ -242,18 +168,6 @@ def delete_all_impressoras():
     connection.close()
 
 def read_impressoras_data(data):
-    """
-    Lê os registros de contagem de impressoras do banco de dados para uma determinada data.
-
-    Args:
-        data (str): Data da leitura no formato 'dd-mm-YYYY'.
-
-    Returns:
-        list: Uma lista de registros de contagem de impressoras para a data especificada.
-
-    Raises:
-        Exception: Se ocorrer um erro ao ler os registros de contagem de impressoras para a data especificada.
-    """
     # Transforma a data do formato 'dd-mm-YYYY' para 'YYYY-mm-dd'
     data = datetime.strptime(data, '%d-%m-%Y').strftime('%Y-%m-%d')
     
@@ -270,22 +184,13 @@ def read_impressoras_data(data):
     return results
 
 def read_all_record_data():
-    """
-    Lê todos os registros da tabela contagem_impressora do banco de dados para a última data de leitura.
-
-    Returns:
-        list: Uma lista de todos os registros da tabela contagem_impressora para a última data de leitura.
-
-    Raises:
-        Exception: Se ocorrer um erro ao ler todos os registros da tabela contagem_impressora.
-    """
     connection = config.get_connection()
     cursor = connection.cursor()
 
     select_query = """
     SELECT * 
     FROM contagem_impressora
-    WHERE DATA_LEITURA = (SELECT MAX(DATA_LEITURA) FROM contagem_impressora)
+    WHERE DATA_LEITURA = (SELECT MAX(REALDATACAPTURE) FROM contagem_impressora)
     """
     cursor.execute(select_query)
     results = cursor.fetchall()
@@ -296,11 +201,60 @@ def read_all_record_data():
     return results
 
 def read_all_impressoras():
-    """
-    Lê todos os registros da tabela contagem_impressora do banco de dados.
+    connection = config.get_connection()
+    cursor = connection.cursor()
 
-    Returns:
-        list: Uma lista de todos os registros da tabela contagem_impressora.
+    select_query = "SELECT * FROM contagem_impressora"
+    cursor.execute(select_query)
+    results = cursor.fetchall()
 
-    Raises:
-        Exception: Se ocorrer
+    cursor.close()
+    connection.close()
+
+    return results
+
+def obter_registros_ultima_data():
+    # Primeiro, obtenha a maior data_leitura
+    connection = config.get_connection()
+    cursor = connection.cursor()
+
+    query_max_date = "SELECT MAX(DATA_LEITURA) FROM contagem_impressora"
+    cursor.execute(query_max_date)
+    ultima_data = cursor.fetchone()[0]
+
+    if ultima_data is None:
+        cursor.close()
+        connection.close()
+        return []
+
+    # Formate a data como string para uso na consulta
+    ultima_data_str = ultima_data.strftime('%Y-%m-%d %H:%M:%S')
+
+    # Em seguida, obtenha todos os registros com essa data_leitura
+    query_records = f"SELECT * FROM contagem_impressora WHERE DATA_LEITURA = TO_DATE('{ultima_data_str}', 'YYYY-MM-DD HH24:MI:SS')"
+    cursor.execute(query_records)
+    results = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+
+    return results
+
+def obter_ultima_data_bd():
+    connection = config.get_connection()
+    cursor = connection.cursor()
+
+    query_max_date = "SELECT MAX(DATA_LEITURA) FROM contagem_impressora"
+    cursor.execute(query_max_date)
+    ultima_data = cursor.fetchone()[0]
+
+    cursor.close()
+    connection.close()
+
+    return ultima_data
+
+if __name__ == '__main__':
+    pass
+    print(obter_ultima_data_bd())
+    # print(read_all_record_data())
+    # print(obter_registros_ultima_data())

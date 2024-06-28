@@ -7,32 +7,29 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 from datetime import datetime
 from threading import Thread
 
+# Função que será agendada para execução
 def insere_webservice_bd():
     """
-    Insere dados do webservice no banco de dados.
-
-    Chama a função insere_websersvice_banco do módulo utils e faz o logging das
-    etapas de execução e conclusão.
+    Chama a função insere_websersvice_banco do módulo utils e faz o logging.
+    
+    Esta função é responsável por inserir dados do webservice no banco de dados.
+    A execução e a conclusão da função são registradas no log.
     """
     logging.info("Executando insere_websersvice_banco")
     utils.insere_webservice_banco()
     logging.info("Execução de insere_websersvice_banco concluída")
 
 def verificar_condicao_de_espera():
-    """
-    Loop contínuo para verificar e logar a condição de espera a cada minuto.
-
-    Esta função imprime os jobs agendados pelo scheduler e loga a hora atual
-    a cada minuto. Permanece em execução até que uma interrupção (Ctrl+C) seja recebida.
-    """
     while True:
         now = datetime.now()
-        logging.info(f'Aguardando execução. Hora atual: {now.strftime("%Y-%m-%d %H:%M:%S")}')
+        logging.info(f'Aguardando execução. Hora atual: {now.strftime("%Y-%m-%d %H:%webnweM:%S")}')
         scheduler.print_jobs()  # Imprime os jobs agendados
         print('Aguardando execução. Pressione Ctrl+C para interromper.')
+
         time.sleep(60)  # Verifica a cada minuto
 
 if __name__ == "__main__":
+    
     # Cria a pasta logs se não existir
     if not os.path.exists('logs'):
         os.makedirs('logs')

@@ -28,7 +28,6 @@ import numpy as np
 import logging
 import re
 
-from dotenv import load_dotenv
 load_dotenv()
 
 from app import webservice
@@ -75,7 +74,7 @@ def gera_arquivo_csv_compilado(pasta):
             caminho_arquivo = os.path.join(pasta, arquivo)
             df = pd.read_csv(caminho_arquivo)
             dataframes.append(df)
-            print(f'Dados do arquivo {arquivo} adicionados')
+            print(f'Dados do arquivo {arquivo} adicionados ')
         contagem += 1
     print(f'Foram adicionados {contagem} arquivos.')
     df_final = pd.concat(dataframes, ignore_index=True)
@@ -90,15 +89,16 @@ def preenche_dados_csv(caminho_csv, data_inicial, data_final, data_inicial_bi):
         data_inicial (str): Data inicial no formato 'dd-mm-YYYY'.
         data_final (str): Data final no formato 'dd-mm-YYYY'.
         data_inicial_bi (str): Data inicial para preenchimento de valores ausentes no formato 'dd-mm-YYYY'.
-
-    Esta função executa as seguintes operações:
-    - Carrega os dados do arquivo CSV e ordena por data e número de série.
-    - Converte a coluna 'RealDateCapture' para o formato datetime e imprime o conjunto de dados.
-    - Seleciona impressoras únicas e salva em um arquivo CSV.
-    - Gera um DataFrame com um intervalo de datas e combina com as impressoras únicas.
-    - Realiza um merge com o DataFrame original e preenche valores ausentes.
-    - Filtra registros a partir da data inicial, preenche valores nulos e salva o resultado final em um arquivo CSV.
-    """
+        
+        Esta função executa as seguintes operações:
+        - Carrega os dados do arquivo CSV e ordena por data e número de série.
+        - Converte a coluna 'RealDateCapture' para o formato datetime e imprime o conjunto de dados.
+        - Seleciona impressoras únicas e salva em um arquivo CSV.
+        - Gera um DataFrame com um intervalo de datas e combina com as impressoras únicas.
+        - Realiza um merge com o DataFrame original e preenche valores ausentes.
+        - Filtra registros a partir da data inicial, preenche valores nulos e salva o resultado final em um arquivo CSV.       
+      """
+    
     print("Carregando o conjunto de dados...")
     # Carrega os dados do arquivo e ordena por data e número de série
     df = pd.read_csv(caminho_csv)
