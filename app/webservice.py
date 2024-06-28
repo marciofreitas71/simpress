@@ -99,4 +99,4 @@ if __name__ == "__main__":
     data = "23-06-2024"
 
     df = recuperar_dados(data)
-    # print(df)
+    print(df)

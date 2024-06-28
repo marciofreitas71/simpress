@@ -28,8 +28,6 @@ import numpy as np
 import logging
 import re
 
-load_dotenv()
-
 from app import webservice
 
 def salva_dados_csv(DateTimeStart, DateTimeEnd):

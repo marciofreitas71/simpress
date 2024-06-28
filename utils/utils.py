@@ -225,7 +225,7 @@ def transforma_arquivos():
 
 if __name__ == "__main__":
     pass
-    verifica_impressoras(data_atual='24-06-2024')
+    verifica_impressoras(data_atual='27-06-2024')
     # insere_webservice_banco()
     # dados_webservice = webservice.recuperar_dados('22-05-2024')
     # print(dados_webservice)

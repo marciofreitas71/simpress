@@ -190,7 +190,7 @@ def read_all_record_data():
     select_query = """
     SELECT * 
     FROM contagem_impressora
-    WHERE DATA_LEITURA = (SELECT MAX(REALDATACAPTURE) FROM contagem_impressora)
+    WHERE DATA_LEITURA = (SELECT MAX(DATA_LEITURA) FROM contagem_impressora)
     """
     cursor.execute(select_query)
     results = cursor.fetchall()
@@ -255,6 +255,6 @@ def obter_ultima_data_bd():
 
 if __name__ == '__main__':
     pass
-    print(obter_ultima_data_bd())
+    # print(obter_ultima_data_bd())
     # print(read_all_record_data())
     # print(obter_registros_ultima_data())
